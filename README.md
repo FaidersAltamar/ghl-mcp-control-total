@@ -37,9 +37,16 @@ Desde el chat de OpenCode o Claude Code puedes pedir:
 │
 ├── api-client/                     # Scripts de fallback con el SDK oficial
 │   ├── ghl-client.js               # Wrapper genérico del SDK
-│   ├── webhook-server.js           # Receptor de webhooks
+│   ├── webhook-server.js           # Receptor local de webhooks (pruebas)
 │   ├── oauth-helper.js             # Helper OAuth
+│   ├── exchange-oauth-code.mjs     # Intercambiar auth code por tokens
+│   ├── refresh-oauth-token.mjs     # Refrescar access token
 │   └── ...
+│
+├── webhook-worker/                 # Receptor de producción en Cloudflare Workers
+│   ├── src/index.ts                # Worker que verifica firmas y recibe webhooks
+│   ├── wrangler.toml
+│   └── .env.example
 │
 ├── ghl-workflow-builder/           # Control total de workflows
 │   ├── mcp-server/
@@ -149,7 +156,7 @@ Para que cargue los nuevos MCP servers.
 | Calendarios / citas | ✅ Completo | Via MCP público |
 | Subida de archivos | ✅ Funciona | `POST /medias/upload-file` con multipart/form-data |
 | Cursos / memberships | ❌ No disponible | GHL no expone API pública |
-| Webhooks en tiempo real | ❌ Requiere pasos extra | Necesita Marketplace OAuth app |
+| Webhooks en tiempo real | ✅ Listo para deploy | Cloudflare Worker en `webhook-worker/`. Requiere Marketplace OAuth app |
 | Nivel agencia / multi-location | ❌ No disponible | Requiere token de agencia |
 
 ---

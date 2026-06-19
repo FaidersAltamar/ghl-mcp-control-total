@@ -464,10 +464,24 @@ Los webhooks no se pueden registrar con un PIT. Se configuran dentro de una **Ma
 5. Guarda la app. Anota el **Client ID** y **Client Secret**.
 6. Instala la app en la location `kNcygEmVTrhIueZQMDXM`. Durante la instalación recibirás un **código de autorización** en la redirect URI configurada.
 
-#### 3.2 Preparar el receptor local
-El servidor receptor listo está en `api-client/webhook-server.js`. Verifica firmas Ed25519 (`X-GHL-Signature`) y legacy RSA (`X-WH-Signature`).
+#### 3.2 Preparar el receptor (producción)
+El receptor de producción es un **Cloudflare Worker** en `webhook-worker/`. Verifica firmas Ed25519 (`X-GHL-Signature`) y legacy RSA (`X-WH-Signature`).
 
-Para probar localmente:
+```bash
+cd webhook-worker
+npm install
+npx wrangler login
+npx wrangler secret put GHL_WEBHOOK_ADMIN_SECRET
+npx wrangler deploy
+```
+
+La URL será algo como:
+```
+https://ghl-control-ads-webhook-worker.tu-cuenta.workers.dev/webhooks/ghl
+```
+
+#### 3.2.1 Receptor local (solo pruebas)
+Si quieres probar localmente con ngrok:
 ```bash
 # Terminal 1
 cd api-client

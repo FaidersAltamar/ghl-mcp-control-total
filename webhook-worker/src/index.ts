@@ -200,7 +200,7 @@ async function handleGet(request: Request, env: Env): Promise<Response> {
 }
 
 async function handleHealth(): Promise<Response> {
-  return Response.json({ ok: true, service: "ghl-webhook-worker" });
+  return Response.json({ ok: true, service: "ghl-control-ads-webhook-worker" });
 }
 
 export default {
