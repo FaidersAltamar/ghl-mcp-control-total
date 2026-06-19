@@ -31,8 +31,9 @@ Connect OpenCode (and Claude/Cursor) to GoHighLevel via MCP + direct API fallbac
 - **Path**: `ghl-workflow-builder/mcp-server/server.js`
 - **Transport**: stdio (`node ghl-workflow-builder/mcp-server/server.js`)
 - **Tools**: `ghl_list_workflows`, `ghl_get_workflow`, `ghl_create_workflow`, `ghl_add_trigger`, `ghl_add_action`, `ghl_publish_workflow`, `ghl_delete_workflow`
-- **Status**: Connected to GHL internal API (`backend.leadconnectorhq.com`) via Firebase refresh token; create/publish/delete tested (2026-06-18)
+- **Status**: Connected to GHL internal API (`backend.leadconnectorhq.com`) via Firebase refresh token; list/create/update/publish/delete tested (2026-06-18). Derived from `drleadflow/ghl-automation-builder`.
 - **Use this server** whenever the user asks about workflows, automations, triggers, or actions.
+- **Known state (post-cleanup)**: location has 22 workflows total, 2 active (`Compra producto`, `Correos de confirmación de compra/carros abandonados`). 5 Instagram draft workflows exist with keywords: `dropi`, `curso/mentoria/Contingencia`, `Scalesoft`, `GPT/IA`, `ZOOM/llamada`.
 
 ## Agent Rules
 1. **Prefer MCP first** — use the exposed tools for every GHL operation.
@@ -446,31 +447,75 @@ Pasos:
 5. Guarda y espera 1-2 minutos.
 
 ### 3. Webhooks (requiere Marketplace OAuth app)
-Los webhooks no se pueden registrar con un PIT. Se configuran dentro de una **Marketplace OAuth app**:
-1. Crea una cuenta de desarrollador en https://marketplace.gohighlevel.com
-2. Crea una nueva app privada.
-3. En **Auth > Advanced**, selecciona todos los scopes.
-4. En **Webhooks > Advanced**, pega tu URL pública (ej. `https://tudominio.com/webhooks/ghl`).
-5. Suscribe los eventos que necesites (ContactCreate, OpportunityCreate, InvoicePaid, etc.).
-6. Instala la app en la location `kNcygEmVTrhIueZQMDXM`.
-7. Recibirás `clientId` y `clientSecret`; con ellos obtén un location access token.
+Los webhooks no se pueden registrar con un PIT. Se configuran dentro de una **Marketplace OAuth app privada**. A continuación el flujo completo:
 
-Un servidor receptor listo está en `api-client/webhook-server.js`. Para probar localmente expón el puerto con ngrok:
+#### 3.1 Crear la app en GHL Marketplace
+1. Ve a https://marketplace.gohighlevel.com e inicia sesión con una cuenta de admin de la location.
+2. Crea una **nueva app privada** (Private App).
+3. En **Auth > Advanced**, selecciona **todos los scopes** disponibles (read + write).
+4. En **Webhooks > Advanced**:
+   - Webhook URL: tu endpoint público, ej. `https://tudominio.com/webhooks/ghl` (para pruebas locales usa ngrok).
+   - Suscribe los eventos que necesites. Recomendados para Control Ads:
+     - `ContactCreate`, `ContactUpdate`, `ContactTagUpdate`
+     - `OpportunityCreate`, `OpportunityStatusUpdate`, `OpportunityStageUpdate`
+     - `InvoiceCreate`, `InvoicePaid`, `InvoiceVoided`
+     - `PaymentCreate`, `PaymentRefund`
+     - `AppointmentCreate`, `AppointmentUpdate`
+5. Guarda la app. Anota el **Client ID** y **Client Secret**.
+6. Instala la app en la location `kNcygEmVTrhIueZQMDXM`. Durante la instalación recibirás un **código de autorización** en la redirect URI configurada.
+
+#### 3.2 Preparar el receptor local
+El servidor receptor listo está en `api-client/webhook-server.js`. Verifica firmas Ed25519 (`X-GHL-Signature`) y legacy RSA (`X-WH-Signature`).
+
+Para probar localmente:
 ```bash
 # Terminal 1
 cd api-client
+npm install express  # solo la primera vez
 GHL_WEBHOOK_PORT=3000 node webhook-server.js
 
-# Terminal 2
+# Terminal 2 (si no tienes ngrok, instálalo: https://ngrok.com/download)
 ngrok http 3000
-# Copia la URL https de ngrok y pégala en la config de webhooks de la app.
+# Copia la URL https de ngrok (ej. https://abc123.ngrok.io) y pégala en Webhooks > Advanced.
 ```
 
-Una vez instalada la app, intercambia el código de autorización por tokens con `api-client/oauth-helper.js`:
+#### 3.3 Obtener el Location Access Token
+Usa `api-client/oauth-helper.js` o los helpers basados en `.env` para intercambiar el auth code o refrescar el token:
+
 ```bash
+cd api-client
+
+# Opción A: pasar todo por argumentos
 node oauth-helper.js authorize <clientId> <clientSecret> <authCode>
 node oauth-helper.js refresh <clientId> <clientSecret> <refreshToken>
+
+# Opción B: leer Client ID / Client Secret desde .env (más cómodo)
+# Asegurate de tener GHL_OAUTH_CLIENT_ID y GHL_OAUTH_CLIENT_SECRET en .env
+node exchange-oauth-code.mjs <authCode>
+node refresh-oauth-token.mjs
 ```
+
+La respuesta incluye:
+```json
+{
+  "access_token": "at-...",
+  "refresh_token": "rt-...",
+  "token_type": "Bearer",
+  "expires_in": 86400,
+  "location_id": "kNcygEmVTrhIueZQMDXM"
+}
+```
+
+#### 3.4 Verificar que funciona
+Con el Location Access Token puedes llamar a la API como si fuera un PIT, pero con scopes de Marketplace:
+```bash
+TOKEN="at-..."
+curl -s "https://services.leadconnectorhq.com/contacts/?locationId=kNcygEmVTrhIueZQMDXM&limit=1" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Version: 2021-07-28"
+```
+
+Y en `api-client/webhooks.log` verás llegar los eventos suscritos.
 
 ### 4. Cursos / Memberships
 La API pública solo expone el endpoint de importación:
@@ -478,8 +523,9 @@ La API pública solo expone el endpoint de importación:
 POST /courses/courses-exporter/public/import
 ```
 No hay endpoints de listado/lectura de cursos vía PIT. Si necesitas control total sobre cursos, las opciones son:
-- Usar el MCP pago `@elitedcs/ghl-mcp` (anuncia soporte de cursos).
+- Usar el MCP pago `@elitedcs/ghl-mcp` (~$97/mes; anuncia soporte de cursos, funnel editor y webhooks nativos).
 - Crear una Marketplace OAuth app con scopes de courses (si GHL los expone para tu app).
+- Alternativas open source evaluadas (`basicmachines-co/open-ghl-mcp`, `BusyBee3333/Go-High-Level-MCP-2026-Complete`, `uxieee/uxie-ghl-mcp-server`) no ofrecen CRUD de cursos ni funnel editor.
 
 ## Workflow Details via Chrome Extension (PIT cannot read workflow internals)
 The official API / SDK only lists workflows (`/workflows/`) but does **not** expose the internal triggers, actions, or step tree of a workflow. To get full workflow internals for analysis in OpenCode/Claude Code, use the local Chrome extension in `ghl-workflow-extractor/`.
@@ -533,10 +579,14 @@ See `ghl-workflow-extractor/README-OPENCODE.md` for full instructions and troubl
 - Payments endpoints consistently require `altId` + `altType=location` instead of `locationId`.
 - Some endpoints (invoices, estimates, media files) return 422 because they need **mandatory query params** not documented in the root path — use MCP tools for these.
 - SDK source-code audit revealed working direct paths for **blogs**, **emails**, **funnels**, **social media posting**, **tasks**, **invoices**, **estimates**, **media files**, and **opportunities search** that were previously marked 404/422.
-- Created local fallback scripts (`api-client/ghl-client.js`, `api-client/webhook-server.js`) using the official SDK.
+- Created local fallback scripts (`api-client/ghl-client.js`, `api-client/webhook-server.js`, `api-client/oauth-helper.js`) using the official SDK.
 - Performed a mass audit of **576 endpoints across 41 SDK services** for location `kNcygEmVTrhIueZQMDXM`. Results: 54 endpoints returned 200 with default params; 75 returned 422 (fixable with correct params); 25 returned 401 (missing scopes/agency token); 27 returned 404.
 - Official GHL docs confirm webhooks are managed through a **Marketplace OAuth app**, not the PIT token.
 - **Courses** and **webhooks** remain unavailable via PIT-scoped direct API: courses only have a public import endpoint, and webhooks are managed through a Marketplace OAuth app.
+- **File upload** (`POST /medias/upload-file`) confirmed working with `multipart/form-data`; max 25 MB.
+- **Revenue snapshot** for `kNcygEmVTrhIueZQMDXM`: 292 succeeded transactions = USD 25,383.99; 9 refunded = USD 1,239.00; **net received = USD 24,144.99**. Top product: `Contingencia SUDO 2025 Matias` (157 sales / USD 18,523.00). Location has 8 active sales funnels.
+- Evaluated free/open-source MCP alternatives: `@nerdsnipe-inc/ghl-mcp-server` (127 tools, already in use), `basicmachines-co/open-ghl-mcp`, `BusyBee3333/Go-High-Level-MCP-2026-Complete`, `uxieee/uxie-ghl-mcp-server` (lists courses), `drausal/gohighlevel-mcp`. None provide workflow builder write access, funnel/page editor, or native webhooks; our custom workflow MCP server already covers workflow CRUD.
+- Pushed the complete project to GitHub: `https://github.com/FaidersAltamar/ghl-mcp-control-total`.
 
 ## Last Updated
-2026-06-18 (switched to location kNcygEmVTrhIueZQMDXM / Control Ads)
+2026-06-19 (cleaned workflows; added alternatives, revenue snapshot, GitHub repo)
