@@ -147,6 +147,7 @@ Para que cargue los nuevos MCP servers.
 | Contactos | ✅ Completo | Via MCP público |
 | Ventas / oportunidades | ✅ Completo | Via MCP público + API directa |
 | Calendarios / citas | ✅ Completo | Via MCP público |
+| Subida de archivos | ✅ Funciona | `POST /medias/upload-file` con multipart/form-data |
 | Cursos / memberships | ❌ No disponible | GHL no expone API pública |
 | Webhooks en tiempo real | ❌ Requiere pasos extra | Necesita Marketplace OAuth app |
 | Nivel agencia / multi-location | ❌ No disponible | Requiere token de agencia |

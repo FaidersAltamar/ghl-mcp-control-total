@@ -404,13 +404,13 @@ Many endpoints that return 404 with obvious paths work via alternative routes:
 | `/invoices/` | 200 | Requires `?altId=$LID&altType=location&limit=&offset=0` |
 | `/invoices/estimate/list` | 200 | Requires `?altId=$LID&altType=location&limit=&offset=0` |
 | `/medias/files` | 200 | Requires `?altId=$LID&altType=location&type=file` |
+| `/medias/upload-file` | 200 | `multipart/form-data`; max 25 MB |
 | `/opportunities/search` | 200 | Uses `location_id` (underscore), not `locationId` |
 
 ### Endpoints NOT available via direct API v1 (use MCP instead)
 These endpoints consistently return 404 in v1, are not exposed by the official SDK, or require Marketplace OAuth app configuration. The MCP server may handle them via internal or v3 APIs:
 - **Courses** — The official SDK only exposes `/courses/courses-exporter/public/import`; no list/get endpoints were found under `/courses` or `/memberships/courses`.
 - **Webhooks** — The SDK only provides a webhook **receiver** (`ghl.webhooks.subscribe()` / `ghl.webhooks.verifySignature()`). Webhook **registration/management** is configured inside a Marketplace OAuth app, not via the PIT-scoped API.
-- **Media file upload / complex queries** (`/medias` with upload operations)
 - **Root `/tasks`** — use `/contacts/{contactId}/tasks` or `/locations/{locationId}/tasks/search` instead.
 
 ## Full Access Setup (Acceso Total)
