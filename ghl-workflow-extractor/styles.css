@@ -1,0 +1,253 @@
+/* GHL Workflow Exporter — injected UI */
+
+.ghl-export-wrap {
+  display: inline-flex;
+  margin-right: 8px;
+}
+
+.ghl-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: #2b2b2b;
+  background: #f4f4f5;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 120ms, border-color 120ms;
+}
+.ghl-export-btn:hover { background: #e9e9eb; border-color: #b8b8be; }
+.ghl-export-btn:focus { outline: 2px solid #6366f1; outline-offset: 1px; }
+.ghl-export-icon { font-size: 14px; line-height: 1; }
+.ghl-export-caret { font-size: 11px; opacity: 0.7; }
+
+.ghl-export-menu {
+  position: absolute;
+  z-index: 999999;
+  min-width: 260px;
+  background: #ffffff;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  font-family: inherit;
+}
+.ghl-export-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #18181b;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ghl-export-item:hover { background: #f4f4f5; }
+.ghl-export-item--disabled {
+  color: #a1a1aa;
+  cursor: not-allowed;
+}
+.ghl-export-item--disabled:hover { background: transparent; }
+.ghl-export-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: #e4e4e7;
+}
+
+/* Import selection modal */
+.ghl-import-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: inherit;
+}
+.ghl-import-modal {
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ghl-import-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ghl-import-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.ghl-import-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+.ghl-import-close {
+  background: transparent;
+  border: 0;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.ghl-import-close:hover { background: #f1f5f9; color: #0f172a; }
+
+.ghl-import-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ghl-import-search {
+  flex: 1;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  color: #0f172a;
+}
+.ghl-import-search:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.ghl-import-link {
+  background: transparent;
+  border: 0;
+  color: #4f46e5;
+  font-size: 13px;
+  cursor: pointer;
+  font: inherit;
+  padding: 4px 6px;
+}
+.ghl-import-link:hover { text-decoration: underline; }
+
+.ghl-import-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+}
+.ghl-import-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ghl-import-row:hover { background: #f8fafc; }
+.ghl-import-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #4f46e5;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ghl-import-row-body { flex: 1; min-width: 0; }
+.ghl-import-row-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+  word-break: break-word;
+}
+.ghl-import-row-meta {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+.ghl-import-folder { color: #4f46e5; font-weight: 500; }
+
+.ghl-import-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+.ghl-import-count { font-size: 12px; color: #64748b; }
+.ghl-import-actions { display: flex; gap: 8px; }
+.ghl-import-btn {
+  height: 34px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  border: 1px solid transparent;
+}
+.ghl-import-btn--ghost {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.ghl-import-btn--ghost:hover { background: #f1f5f9; }
+.ghl-import-btn--primary {
+  background: #4f46e5;
+  color: #ffffff;
+}
+.ghl-import-btn--primary:hover:not(:disabled) { background: #4338ca; }
+.ghl-import-btn--primary:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+}
+
+.ghl-export-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999999;
+  width: 320px;
+  background: #18181b;
+  color: #f4f4f5;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+.ghl-export-toast--success { background: #15803d; }
+.ghl-export-toast--error { background: #b91c1c; }
+.ghl-export-toast--info { background: #1e293b; }
+.ghl-export-toast__msg { line-height: 1.4; }
+.ghl-export-toast__bar {
+  height: 3px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ghl-export-toast__fill {
+  height: 100%;
+  width: 0%;
+  background: rgba(255, 255, 255, 0.85);
+  transition: width 200ms ease;
+}

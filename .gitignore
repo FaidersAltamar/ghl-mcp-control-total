@@ -1,0 +1,27 @@
+.mcp.json
+.opencode/mcp.json
+.env
+.env.local
+*.env
+node_modules/
+dist/
+
+# GHL workflow extractor live data / session tokens
+ghl-workflow-extractor/workflows-live.json
+ghl-workflow-extractor/*.token.json
+ghl-workflow-extractor/*.session.json
+ghl-workflow-extractor/docs/recon-samples/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Probe outputs with live data
+api-client/probe-results.json
+api-client/probe-analysis-clean.txt
+api-client/all-endpoints.json
+
+# GHL workflow builder MCP server
+ghl-workflow-builder/mcp-server/.env
+ghl-workflow-builder/mcp-server/node_modules/
+ghl-workflow-builder/mcp-server/dist/

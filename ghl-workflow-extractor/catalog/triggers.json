@@ -1,0 +1,4364 @@
+{
+  "stats": {
+    "contact": 12,
+    "events": 23,
+    "appointments": 4,
+    "affiliate": 3,
+    "payments": 12,
+    "communities": 5,
+    "certificates": 1,
+    "Google Forms": 1,
+    "Fathom": 1,
+    "Ecommerce Stores": 3,
+    "Google Ads": 1,
+    "HubSpot": 1,
+    "Linear": 12,
+    "ClickUp": 7,
+    "Monday.com": 7,
+    "Notion": 4,
+    "communication": 3,
+    "BaseCamp": 7,
+    "Asana": 9,
+    "Airtable": 2,
+    "Google Contacts": 2,
+    "Survey Monkey": 1,
+    "Manus AI": 2,
+    "Typeform": 1,
+    "Apify": 2,
+    "Cal.com": 6,
+    "Todoist": 3,
+    "opportunities": 5,
+    "affiliates": 1,
+    "courses": 12,
+    "shopify": 3,
+    "ivr": 1,
+    "fb_ig_events": 2
+  },
+  "triggers": {
+    "task_completed": {
+      "key": "task_completed",
+      "name": "Task Completed",
+      "app": "contact",
+      "description": "Task completed trigger.",
+      "icon": "fa-check-square-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "task.assignedTo",
+          "label": "Assigned User",
+          "type": "select",
+          "mappedTo": "USERS"
+        }
+      ],
+      "customVarPrefix": "task_completed",
+      "contextVariables": [
+        "TASK"
+      ]
+    },
+    "contact_engagement_score": {
+      "key": "contact_engagement_score",
+      "name": "Contact Engagement Score",
+      "app": "contact",
+      "description": "Use this trigger to initiate workflow when a contact's engagement score meets a specific condition",
+      "icon": "ri-trophy-line",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "score",
+          "label": "Score",
+          "type": "numerical"
+        }
+      ],
+      "customVarPrefix": "contact_engagement_score"
+    },
+    "messaging_errors": {
+      "key": "messaging_errors",
+      "name": "Messaging Error - SMS",
+      "app": "events",
+      "description": "Triggered based on the error received for an undelivered message. This can be used for taking relevant measures to clean the contact list eventually improving the delivery rate.",
+      "icon": "heroicons-outline:exclamation",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "errorCode",
+          "label": "Error Code",
+          "type": "multiselect",
+          "options": [
+            {
+              "label": "30007 - Carrier Violation",
+              "value": "30007"
+            },
+            {
+              "label": "30034 - A2P Registration Pending on Number",
+              "value": "30034"
+            },
+            {
+              "label": "30032 - Toll Free Number not Verified",
+              "value": "30032"
+            },
+            {
+              "label": "30005 - User Inactive/Number does not exist",
+              "value": "30005"
+            },
+            {
+              "label": "30003 - Unreachable/Out of Service Number",
+              "value": "30003"
+            },
+            {
+              "label": "30004 - Do not want SMS/DND enabled",
+              "value": "30004"
+            },
+            {
+              "label": "30006 - Landline/Incapable to receive SMS",
+              "value": "30006"
+            },
+            {
+              "label": "30023 - US A2P 10DLC - Daily Message Cap Reached",
+              "value": "30023"
+            },
+            {
+              "label": "21408 - Permission to Send SMS Not Enabled for Region",
+              "value": "21408"
+            },
+            {
+              "label": "30008 - Unknown Error",
+              "value": "30008"
+            },
+            {
+              "label": "21606 - Invalid 'From' Phone Number",
+              "value": "21606"
+            },
+            {
+              "label": "21211 - Invalid 'To' Phone Number",
+              "value": "21211"
+            },
+            {
+              "label": "21614 - 'To' Number Is Not a Valid Mobile Number",
+              "value": "21614"
+            },
+            {
+              "label": "21610 - User Replied with STOP (Opted Out)",
+              "value": "21610"
+            },
+            {
+              "label": "30011 - MMS Not Supported by Recipient Number or Region",
+              "value": "30011"
+            },
+            {
+              "label": "30033 - A2P Campaign Suspended or Deleted",
+              "value": "30033"
+            },
+            {
+              "label": "21661 - 'From' Number Is Not SMS-Capable",
+              "value": "21661"
+            },
+            {
+              "label": "21635 - 'To' Number Cannot Be a Landline",
+              "value": "21635"
+            },
+            {
+              "label": "30037 - Outbound Messaging Disabled",
+              "value": "30037"
+            },
+            {
+              "label": "30002 - Sub-Account Suspended",
+              "value": "30002"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "messaging_errors"
+    },
+    "linkedin_form_submitted": {
+      "key": "linkedin_form_submitted",
+      "name": "LinkedIn Lead Form Submitted",
+      "app": "events",
+      "description": "LinkedIn Lead Form Submitted Trigger.",
+      "icon": "fa-linkedin-square",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "DYNAMIC",
+          "label": "DYNAMIC",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "integrations-api",
+            "route": "linkedIn/trigger"
+          }
+        }
+      ],
+      "customVarPrefix": "linkedin_form_submitted",
+      "contextVariables": [
+        "FORM"
+      ]
+    },
+    "funnel_website_pageview": {
+      "key": "funnel_website_pageview",
+      "name": "Funnel/Website PageView",
+      "app": "events",
+      "description": "Runs when a contact has viewed a page",
+      "icon": "fa:file-text",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "funnelId",
+          "label": "Funnel/Website",
+          "type": "select_with_pagination",
+          "required": true,
+          "mappedTo": "FUNNELS",
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "DYNAMIC",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "funnels-api",
+            "route": "page/view/workflow/trigger"
+          }
+        }
+      ],
+      "customVarPrefix": "funnel_website_pageview"
+    },
+    "quiz_submitted": {
+      "key": "quiz_submitted",
+      "name": "Quiz Submitted",
+      "app": "events",
+      "description": "Runs when a quiz is submitted.",
+      "icon": "heroicons-outline:clipboard-list",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "quizId",
+          "label": "Quiz Name",
+          "type": "select_with_pagination",
+          "required": true,
+          "mappedTo": "QUIZZIES",
+          "altersDynamicField": true
+        },
+        {
+          "field": "overallScore",
+          "label": "Overall Score",
+          "type": "numerical"
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "DYNAMIC",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "forms-api",
+            "route": "quiz/categories"
+          }
+        }
+      ],
+      "customVarPrefix": "quiz_submitted"
+    },
+    "reputation_review_received": {
+      "key": "reputation_review_received",
+      "name": "New Review Received",
+      "app": "events",
+      "description": "This trigger allows you to create automated actions when new reviews come in from Facebook or Google. You can filter these reviews based on various criteria to customise your workflow. This trigger is contactless, meaning the reviews are not linked to any specific contact.",
+      "icon": "fa:star",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "review.rating",
+          "label": "Review Rating",
+          "type": "numerical"
+        },
+        {
+          "field": "review.isSpam",
+          "label": "Is Review Spam",
+          "type": "select",
+          "options": [
+            {
+              "label": "Yes",
+              "value": "spam"
+            },
+            {
+              "label": "No",
+              "value": "not-spam"
+            }
+          ]
+        },
+        {
+          "field": "review.source",
+          "label": "Review Source",
+          "type": "select",
+          "options": [
+            {
+              "label": "Google",
+              "value": "google"
+            },
+            {
+              "label": "Facebook",
+              "value": "facebook"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "reputation"
+    },
+    "new_prospect_received_workflow": {
+      "key": "new_prospect_received_workflow",
+      "name": "Prospect Generated",
+      "app": "events",
+      "description": "This trigger allows you to create automated actions when new prospects are received. You can filter these prospects based on various criteria to customize your workflow. The trigger will only be executed once web report links are generated successfully after the prospect has been received and the filters have been matched.",
+      "icon": "fa-location-arrow",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "prospect_source",
+          "label": "Prospect Source",
+          "type": "multiselect",
+          "options": [
+            {
+              "label": "Widget",
+              "value": "widget"
+            },
+            {
+              "label": "In-App",
+              "value": "in_app"
+            },
+            {
+              "label": "AI",
+              "value": "ai"
+            }
+          ]
+        },
+        {
+          "field": "prospect_conversion_score",
+          "label": "Prospect Conversion Score",
+          "type": "numerical"
+        }
+      ],
+      "customVarPrefix": "prospect"
+    },
+    "whatsapp_referral": {
+      "key": "whatsapp_referral",
+      "name": "Click to WhatsApp Ads",
+      "app": "events",
+      "description": "Triggers when an inbound WhatsApp message is received via a referral message.",
+      "icon": "fa-whatsapp",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "source_url",
+          "label": "Ad / Post URL",
+          "type": "string"
+        },
+        {
+          "field": "source_type",
+          "label": "Source Type",
+          "type": "select",
+          "options": [
+            {
+              "label": "Ad",
+              "value": "ad"
+            },
+            {
+              "label": "Post",
+              "value": "post"
+            },
+            {
+              "label": "Unknown",
+              "value": "unknown"
+            }
+          ]
+        },
+        {
+          "field": "source_id",
+          "label": "Ad / Post Id",
+          "type": "string"
+        },
+        {
+          "field": "headline",
+          "label": "Head Line of Ad / Post",
+          "type": "string"
+        }
+      ],
+      "customVarPrefix": "whatsapp_referral"
+    },
+    "external_tracking": {
+      "key": "external_tracking",
+      "name": "External Tracking Event",
+      "app": "events",
+      "description": "Runs when external tracking form is viewed/submitted",
+      "icon": "fa-file-text",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "DYNAMIC",
+          "label": "Dynamic External Tracking Form Filter",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "leadgen-external-tracking-api",
+            "route": "triggers/filters"
+          }
+        }
+      ],
+      "customVarPrefix": "external_tracking"
+    },
+    "service_booking": {
+      "key": "service_booking",
+      "name": "Service Booking",
+      "app": "appointments",
+      "description": "Triggers the workflow when a Service Booking is created or updated.",
+      "icon": "https://storage.googleapis.com/automation-calendars-staging/assets/img/services_icon1.svg",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "services",
+          "label": "In Service",
+          "type": "select"
+        },
+        {
+          "field": "serviceCategories",
+          "label": "In Service Category",
+          "type": "select"
+        },
+        {
+          "field": "status",
+          "label": "Appointment Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "New",
+              "value": "new"
+            },
+            {
+              "label": "Confirmed",
+              "value": "confirmed"
+            },
+            {
+              "label": "Cancelled",
+              "value": "cancelled"
+            },
+            {
+              "label": "Showed",
+              "value": "showed"
+            },
+            {
+              "label": "No-show",
+              "value": "noshow"
+            },
+            {
+              "label": "Invalid",
+              "value": "invalid"
+            }
+          ]
+        },
+        {
+          "field": "contact.tags",
+          "label": "Has Tag",
+          "type": "select",
+          "mappedTo": "TAGS"
+        },
+        {
+          "field": "modifiedBy",
+          "label": "Created By / Modified By",
+          "type": "select",
+          "options": [
+            {
+              "label": "Customer",
+              "value": "customer"
+            },
+            {
+              "label": "User",
+              "value": "user"
+            }
+          ]
+        },
+        {
+          "field": "serviceLocations",
+          "label": "In Service Locations",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "serviceBooking"
+    },
+    "rental_booking": {
+      "key": "rental_booking",
+      "name": "Rental Booking",
+      "app": "appointments",
+      "description": "Triggers the workflow when a Rental Booking is created or updated.",
+      "icon": "https://storage.googleapis.com/automation-calendars-staging/assets/img/rentalBooking.svg",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "contact.tags",
+          "label": "Has Tag",
+          "type": "select",
+          "mappedTo": "TAGS"
+        },
+        {
+          "field": "modifiedBy",
+          "label": "Created By / Modified By",
+          "type": "select",
+          "options": [
+            {
+              "label": "Customer",
+              "value": "customer"
+            },
+            {
+              "label": "User",
+              "value": "user"
+            }
+          ]
+        },
+        {
+          "field": "status",
+          "label": "Booking Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "Unconfirmed",
+              "value": "unconfirmed"
+            },
+            {
+              "label": "Booked",
+              "value": "booked"
+            },
+            {
+              "label": "Partial",
+              "value": "partial"
+            },
+            {
+              "label": "Active",
+              "value": "active"
+            },
+            {
+              "label": "Completed",
+              "value": "completed"
+            },
+            {
+              "label": "Cancelled",
+              "value": "cancelled"
+            }
+          ]
+        },
+        {
+          "field": "listings",
+          "label": "In Listing",
+          "type": "multiselect"
+        },
+        {
+          "field": "listingCategories",
+          "label": "In Rental Categories",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "rentalBooking"
+    },
+    "affiliate_sales": {
+      "key": "affiliate_sales",
+      "name": "New Affiliate Sales",
+      "app": "affiliate",
+      "description": "Runs when a new sales transaction is recorded for an affiliate.",
+      "icon": "fa-money",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "campaign",
+          "label": "Campaign",
+          "type": "select"
+        },
+        {
+          "field": "affiliateId",
+          "label": "Affiliate",
+          "type": "select_with_pagination",
+          "mappedTo": "AFFILIATES"
+        },
+        {
+          "field": "taxForm",
+          "label": "W8/W9 Form",
+          "type": "select",
+          "options": [
+            {
+              "label": "Exists",
+              "value": "true"
+            },
+            {
+              "label": "Not Exists",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "field": "payoutMethod",
+          "label": "Payout Method",
+          "type": "select",
+          "options": [
+            {
+              "label": "Exists",
+              "value": "true"
+            },
+            {
+              "label": "Not Exists",
+              "value": "false"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "affiliate_sales"
+    },
+    "affiliate_campaign_enroll": {
+      "key": "affiliate_campaign_enroll",
+      "name": "Affiliate enrolled in campaign",
+      "app": "affiliate",
+      "description": "Runs when a Affiliate will be added in the campaign.",
+      "icon": "fa-user-plus",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "campaign.id",
+          "label": "Campaign",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "affiliate_campaign_enroll"
+    },
+    "affiliate_new_lead": {
+      "key": "affiliate_new_lead",
+      "name": "Lead Created",
+      "app": "affiliate",
+      "description": "Runs when a new affiliate lead is created",
+      "icon": "fa-user-plus",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "campaign",
+          "label": "Campaign",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "affiliate_new_lead"
+    },
+    "proposal_estimate_update": {
+      "key": "proposal_estimate_update",
+      "name": "Documents & Contracts",
+      "app": "payments",
+      "description": "Documents & Contracts Trigger",
+      "icon": "fa:file-text",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "status",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "Sent",
+              "value": "SENT"
+            },
+            {
+              "label": "Signed/Accepted",
+              "value": "SIGNED"
+            },
+            {
+              "label": "Completed",
+              "value": "COMPLETED"
+            },
+            {
+              "label": "Viewed",
+              "value": "VIEWED"
+            },
+            {
+              "label": "Declined",
+              "value": "DECLINED"
+            }
+          ]
+        },
+        {
+          "field": "value",
+          "label": "Value",
+          "type": "numerical"
+        },
+        {
+          "field": "recipientType",
+          "label": "Recipient type",
+          "type": "select",
+          "options": [
+            {
+              "label": "Business User",
+              "value": "user"
+            },
+            {
+              "label": "Contact",
+              "value": "contact"
+            }
+          ]
+        },
+        {
+          "field": "documentCreatedByTemplateId",
+          "label": "Template",
+          "type": "select"
+        },
+        {
+          "field": "document_type",
+          "label": "[Deprecated]Document Type",
+          "type": "select",
+          "options": [
+            {
+              "label": "Proposal",
+              "value": "proposal"
+            },
+            {
+              "label": "Estimate",
+              "value": "estimate"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "proposal_estimate_update",
+      "contextVariables": [
+        "DOCUMENT"
+      ]
+    },
+    "estimate_update": {
+      "key": "estimate_update",
+      "name": "Estimates",
+      "app": "payments",
+      "description": "Estimates Trigger",
+      "icon": "fa:file-text",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "status",
+          "label": "Estimate Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "Sent",
+              "value": "sent"
+            },
+            {
+              "label": "Accepted",
+              "value": "accepted"
+            },
+            {
+              "label": "Declined",
+              "value": "declined"
+            },
+            {
+              "label": "Invoiced",
+              "value": "invoiced"
+            },
+            {
+              "label": "Viewed",
+              "value": "viewed"
+            }
+          ]
+        },
+        {
+          "field": "value",
+          "label": "Estimate Value",
+          "type": "numerical"
+        },
+        {
+          "field": "documentCreatedByTemplateId",
+          "label": "Template",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "estimate"
+    },
+    "subscription": {
+      "key": "subscription",
+      "name": "Subscription",
+      "app": "payments",
+      "description": "Runs when a new subscription is created or subscription status changes",
+      "icon": "la:file-invoice-dollar",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "status",
+          "label": "Status",
+          "type": "select"
+        },
+        {
+          "field": "global_product.id",
+          "label": "Global Products",
+          "type": "select",
+          "mappedTo": "GLOBAL_PRODUCTS",
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "DYNAMIC",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "products-api",
+            "route": "get-prices-for-workflow"
+          }
+        }
+      ],
+      "customVarPrefix": "subscription"
+    },
+    "refund": {
+      "key": "refund",
+      "name": "Refund",
+      "app": "payments",
+      "description": "Runs when a refund is initiated for a transaction",
+      "icon": "ri:refund-2-line",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "status",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "Success",
+              "value": "succeeded"
+            },
+            {
+              "label": "Failed",
+              "value": "failed"
+            }
+          ]
+        },
+        {
+          "field": "amount",
+          "label": "Amount",
+          "type": "numerical"
+        },
+        {
+          "field": "transaction.status",
+          "label": "Type",
+          "type": "select",
+          "options": [
+            {
+              "label": "Full",
+              "value": "refunded"
+            },
+            {
+              "label": "Partial",
+              "value": "partially_refunded"
+            }
+          ]
+        },
+        {
+          "field": "transaction.entitySourceType",
+          "label": "Source",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "refund"
+    },
+    "coupon_code_applied": {
+      "key": "coupon_code_applied",
+      "name": "Coupon Code Applied",
+      "app": "payments",
+      "description": "Fires when a coupon code is applied to an order during checkout, regardless of checkout completion.",
+      "icon": "fa-spinner",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "code",
+          "label": "Coupon Code",
+          "type": "multiselect"
+        },
+        {
+          "field": "source",
+          "label": "Source",
+          "type": "select"
+        },
+        {
+          "field": "productType",
+          "label": "Product Type",
+          "type": "multiselect"
+        },
+        {
+          "field": "orderValueBeforeDiscount",
+          "label": "Order Value (Before Discount)",
+          "type": "numerical"
+        },
+        {
+          "field": "discountValue",
+          "label": "Coupon Value",
+          "type": "numerical"
+        },
+        {
+          "field": "productsInOrder",
+          "label": "Product(s) in Order",
+          "type": "multiselect",
+          "altersDynamicField": true
+        },
+        {
+          "field": "productCollections",
+          "label": "Product Collection",
+          "type": "multiselect"
+        },
+        {
+          "field": "discountType",
+          "label": "Coupon Type",
+          "type": "select"
+        },
+        {
+          "field": "name",
+          "label": "Coupon Name",
+          "type": "multiselect"
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "Dynamic",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "",
+            "route": ""
+          }
+        }
+      ],
+      "customVarPrefix": "coupon_code_applied"
+    },
+    "coupon_redemption_limit_reached": {
+      "key": "coupon_redemption_limit_reached",
+      "name": "Coupon Redemption Limit Reached",
+      "app": "payments",
+      "description": "Fires when a coupon code reaches its maximum allowed number of redemptions. Should be triggered after the last coupon used transaction is completed.",
+      "icon": "fa-bell",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "code",
+          "label": "Coupon Code",
+          "type": "multiselect"
+        },
+        {
+          "field": "discountType",
+          "label": "Coupon Type",
+          "type": "select"
+        },
+        {
+          "field": "name",
+          "label": "Coupon Name",
+          "type": "multiselect"
+        },
+        {
+          "field": "redemptionLimit",
+          "label": "Redemption Limit",
+          "type": "numerical"
+        }
+      ],
+      "customVarPrefix": "coupon_redemption_limit_reached"
+    },
+    "coupon_code_expired": {
+      "key": "coupon_code_expired",
+      "name": "Coupon Code Expired",
+      "app": "payments",
+      "description": "Fires when a coupon code reaches its scheduled expiration date and becomes inactive.",
+      "icon": "fa:window-close",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "code",
+          "label": "Coupon Code",
+          "type": "multiselect"
+        },
+        {
+          "field": "discountType",
+          "label": "Coupon Type",
+          "type": "select"
+        },
+        {
+          "field": "name",
+          "label": "Coupon Name",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "coupon_code_expired"
+    },
+    "coupon_code_redeemed": {
+      "key": "coupon_code_redeemed",
+      "name": "Coupon Code Redeemed",
+      "app": "payments",
+      "description": "Fires when a coupon code is successfully redeemed in a completed transaction.",
+      "icon": "fa-check-square-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "code",
+          "label": "Coupon Code",
+          "type": "multiselect"
+        },
+        {
+          "field": "source",
+          "label": "Source",
+          "type": "select"
+        },
+        {
+          "field": "productType",
+          "label": "Product Type",
+          "type": "multiselect"
+        },
+        {
+          "field": "orderValueBeforeDiscount",
+          "label": "Order Value (Before Discount)",
+          "type": "numerical"
+        },
+        {
+          "field": "discountValue",
+          "label": "Coupon Value",
+          "type": "numerical"
+        },
+        {
+          "field": "productsInOrder",
+          "label": "Product(s) in Order",
+          "type": "multiselect",
+          "altersDynamicField": true
+        },
+        {
+          "field": "productCollections",
+          "label": "Product Collection",
+          "type": "multiselect"
+        },
+        {
+          "field": "contactEmailId",
+          "label": "Contact Email ID",
+          "type": "string"
+        },
+        {
+          "field": "contactTags",
+          "label": "Contact Tag",
+          "type": "string"
+        },
+        {
+          "field": "discountType",
+          "label": "Coupon Type",
+          "type": "select"
+        },
+        {
+          "field": "name",
+          "label": "Coupon Name",
+          "type": "multiselect"
+        },
+        {
+          "field": "redemptionCount",
+          "label": "Redemption Count (per coupon)",
+          "type": "numerical"
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "Dynamic",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "",
+            "route": ""
+          }
+        }
+      ],
+      "customVarPrefix": "coupon_code_redeemed"
+    },
+    "group_access_granted": {
+      "key": "group_access_granted",
+      "name": "Group Access Granted",
+      "app": "communities",
+      "description": "Community Group Access Granted trigger",
+      "icon": "fa-bookmark-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "groupId",
+          "label": "Group",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "group_access_granted"
+    },
+    "group_access_revoked": {
+      "key": "group_access_revoked",
+      "name": "Group Access Revoked",
+      "app": "communities",
+      "description": "Triggers when a contact's access is revoked from community group's private channel",
+      "icon": "fa-minus-square-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "groupId",
+          "label": "Group",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "group_access_revoked"
+    },
+    "private_channel_access_granted": {
+      "key": "private_channel_access_granted",
+      "name": "Private Channel Access Granted",
+      "app": "communities",
+      "description": "Triggers when a contact is granted access to community group's private channel",
+      "icon": "fa-bookmark-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "groupId",
+          "label": "Group",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "Private Channel",
+          "type": "DYNAMIC",
+          "required": true,
+          "dynamicFrom": {
+            "service": "communities-api",
+            "route": "triggers/groups/private-channels"
+          }
+        }
+      ],
+      "customVarPrefix": "private_channel_access_granted"
+    },
+    "private_channel_access_revoked": {
+      "key": "private_channel_access_revoked",
+      "name": "Private Channel Access Revoked",
+      "app": "communities",
+      "description": "Community Private Channel Access Revoked trigger",
+      "icon": "fa-minus-square-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "groupId",
+          "label": "Group",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "Private Channel",
+          "type": "DYNAMIC",
+          "required": true,
+          "dynamicFrom": {
+            "service": "communities-api",
+            "route": "triggers/groups/private-channels"
+          }
+        }
+      ],
+      "customVarPrefix": "private_channel_access_revoked"
+    },
+    "user_group_gamification_level_changed": {
+      "key": "user_group_gamification_level_changed",
+      "name": "Community Group Member Leaderboard Level Changed",
+      "app": "communities",
+      "description": "This trigger enables you to create automated actions when a community group member's gamification level changes.",
+      "icon": "fa-arrow-up",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "groupId",
+          "label": "Group",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "level",
+          "label": "Level",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Level 1",
+              "value": "1"
+            },
+            {
+              "label": "Level 2",
+              "value": "2"
+            },
+            {
+              "label": "Level 3",
+              "value": "3"
+            },
+            {
+              "label": "Level 4",
+              "value": "4"
+            },
+            {
+              "label": "Level 5",
+              "value": "5"
+            },
+            {
+              "label": "Level 6",
+              "value": "6"
+            },
+            {
+              "label": "Level 7",
+              "value": "7"
+            },
+            {
+              "label": "Level 8",
+              "value": "8"
+            },
+            {
+              "label": "Level 9",
+              "value": "9"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "user_group_gamification_level_changed"
+    },
+    "certificates_issued_workflow": {
+      "key": "certificates_issued_workflow",
+      "name": "Certificates Issued",
+      "app": "certificates",
+      "description": "Runs when a certificate is issued.",
+      "icon": "fa-certificate",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "templateId",
+          "label": "Templates",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "certificates_issued_workflow"
+    },
+    "lc_gforms_new_updated_response": {
+      "key": "lc_gforms_new_updated_response",
+      "name": "New or Updated Response",
+      "app": "Google Forms",
+      "description": "Triggers when a new response is received in a Google Form.",
+      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\"      width=\"20\"      height=\"20\"      viewBox=\"0 0 48 48\"      preserveAspectRatio=\"xMidYMid meet\">   <path fill=\"#673ab7\"         d=\"M12,44c-1.657,0-3-1.343-3-3V7c0-1.657,1.343-3,3-3h16l11,11v26c0,1.657-1.343,3-3,3H12z\"/>   <path fill=\"#5e35b1\"         d=\"M39 15L28.883 14.125 39 24.124z\"/>   <path fill=\"#b39ddb\"         d=\"M39,15h-8c-1.657,0-3-1.343-3-3V4L39,15z\"/>   <path fill=\"#f5f5f5\"         d=\"M22 23H32V25H22z            M22 28H32V30H22z            M22 33H32V35H22z            M17.5 22.5A1.5 1.5 0 1 0 17.5 25.5            M17.5 27.5A1.5 1.5 0 1 0 17.5 30.5            M17.5 32.5A1.5 1.5 0 1 0 17.5 35.5z\"/> </svg>",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "form_id",
+          "label": "Form",
+          "type": "select_with_pagination",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "lc_gforms_new_updated_response"
+    },
+    "lc_fathom_new_recording": {
+      "key": "lc_fathom_new_recording",
+      "name": "New recording",
+      "app": "Fathom",
+      "description": "Triggered when a new recording is created in Fathom.",
+      "icon": "https://integration-apps-assets.leadconnectorhq.com/assets/Fathom/fathom_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "triggers_on",
+          "label": "Triggers on",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "My Meetings",
+              "value": "my_meetings"
+            },
+            {
+              "label": "Team Meetings",
+              "value": "team_meetings"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "lc_fathom_new_recording"
+    },
+    "ecommerce_order_fulfilled_trigger": {
+      "key": "ecommerce_order_fulfilled_trigger",
+      "name": "Order Fulfilled",
+      "app": "Ecommerce Stores",
+      "description": "Triggers when an order is fulfilled",
+      "icon": "fa-truck",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "cartValue",
+          "label": "Cart Value",
+          "type": "numerical"
+        },
+        {
+          "field": "globalProductIds",
+          "label": "Fulfilled Products",
+          "type": "multiselect_with_pagination",
+          "mappedTo": "GLOBAL_PRODUCTS",
+          "altersDynamicField": true
+        },
+        {
+          "field": "trackingNumber",
+          "label": "Tracking Number",
+          "type": "string"
+        },
+        {
+          "field": "shippingCarrier",
+          "label": "Shipping Carrier",
+          "type": "string"
+        },
+        {
+          "field": "order.source",
+          "label": "Order Source",
+          "type": "select",
+          "options": [
+            {
+              "label": "Store",
+              "value": "store"
+            },
+            {
+              "label": "External",
+              "value": "external"
+            }
+          ]
+        },
+        {
+          "field": "order.sub_source",
+          "label": "Order Sub Source",
+          "type": "select",
+          "options": [
+            {
+              "label": "Shopify",
+              "value": "shopify"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "ecommerce_order_fulfilled_trigger",
+      "contextVariables": [
+        "ORDER"
+      ]
+    },
+    "leadgen_ecommerce_review_submitted": {
+      "key": "leadgen_ecommerce_review_submitted",
+      "name": "Product Review Submitted",
+      "app": "Ecommerce Stores",
+      "description": "Triggers when a Product Review is submitted for E-commerce Stores",
+      "icon": "fa-comments-o",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "headline",
+          "label": "Review Headline",
+          "type": "string"
+        },
+        {
+          "field": "comment",
+          "label": "Review Comment",
+          "type": "string"
+        },
+        {
+          "field": "customer.name",
+          "label": "User Name",
+          "type": "string"
+        },
+        {
+          "field": "customer.email",
+          "label": "User email ",
+          "type": "string"
+        },
+        {
+          "field": "global_product.id",
+          "label": "Global Product",
+          "type": "select",
+          "mappedTo": "GLOBAL_PRODUCTS"
+        },
+        {
+          "field": "storeId",
+          "label": "Store Name",
+          "type": "multiselect"
+        },
+        {
+          "field": "rating",
+          "label": "Review Rating (star)",
+          "type": "multiselect",
+          "options": [
+            {
+              "label": "1",
+              "value": "1"
+            },
+            {
+              "label": "2",
+              "value": "2"
+            },
+            {
+              "label": "3",
+              "value": "3"
+            },
+            {
+              "label": "4",
+              "value": "4"
+            },
+            {
+              "label": "5",
+              "value": "5"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "leadgen_ecommerce_review_submitted"
+    },
+    "abandoned_checkout": {
+      "key": "abandoned_checkout",
+      "name": "Abandoned Checkout",
+      "app": "Ecommerce Stores",
+      "description": "Triggers when a cart is abandoned",
+      "icon": "fa-shopping-cart",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "cartValue",
+          "label": "Cart Value",
+          "type": "numerical"
+        },
+        {
+          "field": "orderSource",
+          "label": "Order Source",
+          "type": "select",
+          "options": [
+            {
+              "label": "External",
+              "value": "external"
+            },
+            {
+              "label": "Store",
+              "value": "store"
+            }
+          ]
+        },
+        {
+          "field": "subSource",
+          "label": "Sub Source",
+          "type": "select",
+          "options": [
+            {
+              "label": "Shopify",
+              "value": "shopify"
+            }
+          ]
+        },
+        {
+          "field": "duration",
+          "label": "Duration (in mins)",
+          "type": "numerical",
+          "required": true
+        },
+        {
+          "field": "globalProductIds",
+          "label": "Global Products",
+          "type": "multiselect",
+          "mappedTo": "GLOBAL_PRODUCTS"
+        },
+        {
+          "field": "country",
+          "label": "Country",
+          "type": "multiselect",
+          "mappedTo": "COUNTRIES"
+        },
+        {
+          "field": "storeId",
+          "label": "Store Name",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "abandoned_checkout"
+    },
+    "google_lead_form_submitted": {
+      "key": "google_lead_form_submitted",
+      "name": "Google Lead Form Submitted",
+      "app": "Google Ads",
+      "description": null,
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=ads.google.com",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "DYNAMIC",
+          "label": "DYNAMIC",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "",
+            "route": ""
+          }
+        },
+        {
+          "field": "adAccountId",
+          "label": "Ad Account Is",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "x",
+              "value": "x"
+            }
+          ],
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "google_lead_form_submitted"
+    },
+    "lc_hubspot_contact_created": {
+      "key": "lc_hubspot_contact_created",
+      "name": "New Contact Created",
+      "app": "HubSpot",
+      "description": "Triggers when a new contact is created in HubSpot. Polls every 60 seconds.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.hubspot.com",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_hubspot_contact_created"
+    },
+    "lc_linear_new_issue": {
+      "key": "lc_linear_new_issue",
+      "name": "New Issue",
+      "app": "Linear",
+      "description": "Triggers when a new issue is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "state.id",
+          "label": "Status",
+          "type": "select"
+        },
+        {
+          "field": "creator.id",
+          "label": "Creator",
+          "type": "select"
+        },
+        {
+          "field": "assignee.id",
+          "label": "Assignee",
+          "type": "select"
+        },
+        {
+          "field": "priority",
+          "label": "Priority",
+          "type": "select",
+          "options": [
+            {
+              "label": "No Priority",
+              "value": "0"
+            },
+            {
+              "label": "Urgent",
+              "value": "1"
+            },
+            {
+              "label": "High",
+              "value": "2"
+            },
+            {
+              "label": "Medium",
+              "value": "3"
+            },
+            {
+              "label": "Low",
+              "value": "4"
+            }
+          ]
+        },
+        {
+          "field": "label_ids",
+          "label": "Label",
+          "type": "multiselect"
+        },
+        {
+          "field": "project.id",
+          "label": "Project",
+          "type": "select",
+          "altersDynamicField": true
+        },
+        {
+          "field": "projectMilestone.id",
+          "label": "Project Milestone",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_issue"
+    },
+    "lc_linear_updated_issue": {
+      "key": "lc_linear_updated_issue",
+      "name": "Updated Issue",
+      "app": "Linear",
+      "description": "Triggers when an issue is updated in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "state.id",
+          "label": "Status",
+          "type": "select"
+        },
+        {
+          "field": "creator.id",
+          "label": "Creator",
+          "type": "select"
+        },
+        {
+          "field": "assignee.id",
+          "label": "Assignee",
+          "type": "select"
+        },
+        {
+          "field": "priority",
+          "label": "Priority",
+          "type": "select",
+          "options": [
+            {
+              "label": "No Priority",
+              "value": "0"
+            },
+            {
+              "label": "Urgent",
+              "value": "1"
+            },
+            {
+              "label": "High",
+              "value": "2"
+            },
+            {
+              "label": "Medium",
+              "value": "3"
+            },
+            {
+              "label": "Low",
+              "value": "4"
+            }
+          ]
+        },
+        {
+          "field": "label_ids",
+          "label": "Label",
+          "type": "multiselect"
+        },
+        {
+          "field": "project.id",
+          "label": "Project",
+          "type": "select",
+          "altersDynamicField": true
+        },
+        {
+          "field": "projectMilestone.id",
+          "label": "Project Milestone",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_updated_issue"
+    },
+    "lc_linear_new_issue_comment": {
+      "key": "lc_linear_new_issue_comment",
+      "name": "New Issue Comment",
+      "app": "Linear",
+      "description": "Triggers when a new issue comment is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "issue.id",
+          "label": "Issue",
+          "type": "select_with_pagination"
+        },
+        {
+          "field": "user.id",
+          "label": "Creator",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_issue_comment"
+    },
+    "lc_linear_new_project": {
+      "key": "lc_linear_new_project",
+      "name": "New Project",
+      "app": "Linear",
+      "description": "Triggers when a new project is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "lead.id",
+          "label": "Project Lead",
+          "type": "select"
+        },
+        {
+          "field": "state",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "Backlog",
+              "value": "backlog"
+            },
+            {
+              "label": "Planned",
+              "value": "planned"
+            },
+            {
+              "label": "Started",
+              "value": "started"
+            },
+            {
+              "label": "Paused",
+              "value": "paused"
+            },
+            {
+              "label": "Completed",
+              "value": "completed"
+            },
+            {
+              "label": "Cancelled",
+              "value": "cancelled"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_project"
+    },
+    "lc_linear_new_project_update": {
+      "key": "lc_linear_new_project_update",
+      "name": "New Project Update",
+      "app": "Linear",
+      "description": "Triggers when a new project update is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project.id",
+          "label": "Project",
+          "type": "select_with_pagination"
+        },
+        {
+          "field": "user.id",
+          "label": "Creator",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_project_update"
+    },
+    "lc_linear_updated_project_update": {
+      "key": "lc_linear_updated_project_update",
+      "name": "Updated Project Update",
+      "app": "Linear",
+      "description": "Triggers when a project update is updated in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "health",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "On Track",
+              "value": "onTrack"
+            },
+            {
+              "label": "At Risk",
+              "value": "atRisk"
+            },
+            {
+              "label": "Off Track",
+              "value": "offTrack"
+            }
+          ]
+        },
+        {
+          "field": "project.lead.id",
+          "label": "Lead",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_updated_project_update"
+    },
+    "lc_linear_new_customer": {
+      "key": "lc_linear_new_customer",
+      "name": "New Customer",
+      "app": "Linear",
+      "description": "Triggers when a new customer is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_customer"
+    },
+    "lc_linear_new_customer_need": {
+      "key": "lc_linear_new_customer_need",
+      "name": "New Customer Need",
+      "app": "Linear",
+      "description": "Triggers when a new customer request is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "customer.id",
+          "label": "Customer",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_customer_need"
+    },
+    "lc_linear_updated_customer_need": {
+      "key": "lc_linear_updated_customer_need",
+      "name": "Updated Customer Need",
+      "app": "Linear",
+      "description": "Triggers when a customer request is updated in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "customer.id",
+          "label": "Customer",
+          "type": "select_with_pagination"
+        }
+      ],
+      "customVarPrefix": "lc_linear_updated_customer_need"
+    },
+    "lc_linear_new_document_comment": {
+      "key": "lc_linear_new_document_comment",
+      "name": "New Document Comment",
+      "app": "Linear",
+      "description": "Triggers when a new document comment is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "user.id",
+          "label": "Creator",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_document_comment"
+    },
+    "lc_linear_new_initiative_update": {
+      "key": "lc_linear_new_initiative_update",
+      "name": "New Initiative Update",
+      "app": "Linear",
+      "description": "Triggers when a new initiative update is created in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "health",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "On Track",
+              "value": "onTrack"
+            },
+            {
+              "label": "At Risk",
+              "value": "atRisk"
+            },
+            {
+              "label": "Off Track",
+              "value": "offTrack"
+            }
+          ]
+        },
+        {
+          "field": "user.id",
+          "label": "Creator",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "lc_linear_new_initiative_update"
+    },
+    "lc_linear_updated_customer": {
+      "key": "lc_linear_updated_customer",
+      "name": "Updated Customer",
+      "app": "Linear",
+      "description": "Triggers when a customer is updated in Linear.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/linear/linear-brand-logo.jpeg",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Team",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "lc_linear_updated_customer"
+    },
+    "clickup_task_updated": {
+      "key": "clickup_task_updated",
+      "name": "Task Changes",
+      "app": "ClickUp",
+      "description": "Trigger when a task is updated in ClickUp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "WorkSpace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "folder_id",
+          "label": "Folders",
+          "type": "select"
+        },
+        {
+          "field": "list_id",
+          "label": "List",
+          "type": "select"
+        },
+        {
+          "field": "status",
+          "label": "Status",
+          "type": "select"
+        },
+        {
+          "field": "priority",
+          "label": "Priority",
+          "type": "select",
+          "options": [
+            {
+              "label": "Urgent",
+              "value": "1"
+            },
+            {
+              "label": "High",
+              "value": "2"
+            },
+            {
+              "label": "Normal",
+              "value": "3"
+            },
+            {
+              "label": "Low",
+              "value": "4"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "clickup_task_updated"
+    },
+    "clickup_new_time_entry": {
+      "key": "clickup_new_time_entry",
+      "name": "New Time Entry",
+      "app": "ClickUp",
+      "description": "Triggers when a new time entry is logged in ClickUp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select"
+        },
+        {
+          "field": "folder_id",
+          "label": "Folders",
+          "type": "select"
+        },
+        {
+          "field": "list_id",
+          "label": "List",
+          "type": "select"
+        },
+        {
+          "field": "task_id",
+          "label": "Task",
+          "type": "select_with_pagination"
+        }
+      ],
+      "customVarPrefix": "clickup_new_time_entry"
+    },
+    "clickup_new_task": {
+      "key": "clickup_new_task",
+      "name": "New Task",
+      "app": "ClickUp",
+      "description": "Triggers when a new task is created in a specified ClickUp list.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select"
+        },
+        {
+          "field": "folder_id",
+          "label": "Folders",
+          "type": "select"
+        },
+        {
+          "field": "list_id",
+          "label": "List",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "clickup_new_task"
+    },
+    "clickup_new_list": {
+      "key": "clickup_new_list",
+      "name": "New List",
+      "app": "ClickUp",
+      "description": "Triggers when a new list is created in ClickUp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "WorkSpace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select"
+        },
+        {
+          "field": "folder_id",
+          "label": "Folders",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "clickup_new_list"
+    },
+    "clickup_new_folder": {
+      "key": "clickup_new_folder",
+      "name": "New Folder",
+      "app": "ClickUp",
+      "description": "Triggers when a new folder is created in ClickUp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "clickup_new_folder"
+    },
+    "clickup_comment_created": {
+      "key": "clickup_comment_created",
+      "name": "New Comment on a Task",
+      "app": "ClickUp",
+      "description": "Triggers when a new comment is created in ClickUp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select"
+        },
+        {
+          "field": "folder_id",
+          "label": "Folders",
+          "type": "select"
+        },
+        {
+          "field": "list_id",
+          "label": "List",
+          "type": "select"
+        },
+        {
+          "field": "task_id",
+          "label": "Task",
+          "type": "select"
+        }
+      ],
+      "customVarPrefix": "clickup_comment_created"
+    },
+    "lc_cu_task_changes_internal": {
+      "key": "lc_cu_task_changes_internal",
+      "name": "Task Changes [Internal]",
+      "app": "ClickUp",
+      "description": "Trigger when a task is updated in ClickUp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=clickup.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "team_id",
+          "label": "WorkSpace",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "space_id",
+          "label": "Space",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "folder_id",
+          "label": "Folders",
+          "type": "select"
+        },
+        {
+          "field": "list_id",
+          "label": "List",
+          "type": "select"
+        },
+        {
+          "field": "status",
+          "label": "Status",
+          "type": "select"
+        },
+        {
+          "field": "priority",
+          "label": "Priority",
+          "type": "select",
+          "options": [
+            {
+              "label": "Urgent",
+              "value": "1"
+            },
+            {
+              "label": "High",
+              "value": "2"
+            },
+            {
+              "label": "Normal",
+              "value": "3"
+            },
+            {
+              "label": "Low",
+              "value": "4"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "lc_cu_task_changes_internal"
+    },
+    "lc_monday_board_created": {
+      "key": "lc_monday_board_created",
+      "name": "New Board",
+      "app": "Monday.com",
+      "description": "This will trigger when a new board is created.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_monday_board_created"
+    },
+    "lc_monday_new_item_created": {
+      "key": "lc_monday_new_item_created",
+      "name": "New Item In A Board",
+      "app": "Monday.com",
+      "description": "Triggers when a new item is created in a board in Monday.com",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "board_id",
+          "label": "Board Id",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "lc_monday_new_item_created"
+    },
+    "lc_monday_user_added_to_board": {
+      "key": "lc_monday_user_added_to_board",
+      "name": "New User",
+      "app": "Monday.com",
+      "description": "Triggers when a user is added in Monday.com.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_monday_user_added_to_board"
+    },
+    "lc_monday_new_update_in_board": {
+      "key": "lc_monday_new_update_in_board",
+      "name": "New Update in Board",
+      "app": "Monday.com",
+      "description": "Triggers when a new update is posted on a board in Monday.com",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "board_id",
+          "label": "Board Id",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "lc_monday_new_update_in_board"
+    },
+    "lc_monday_any_column_value_changed": {
+      "key": "lc_monday_any_column_value_changed",
+      "name": "Any Column Value Changed In Board",
+      "app": "Monday.com",
+      "description": "Triggers when any column value is changed in board.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "board_id",
+          "label": "Board Id",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "column_id",
+          "label": "Column",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "lc_monday_any_column_value_changed"
+    },
+    "lc_monday_item_moved_to_any_group": {
+      "key": "lc_monday_item_moved_to_any_group",
+      "name": "Item Moved to Any Group",
+      "app": "Monday.com",
+      "description": "Triggers when a item is moved to any group in the board.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "board_id",
+          "label": "Board Id",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "group_id",
+          "label": "Group Id",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "lc_monday_item_moved_to_any_group"
+    },
+    "lc_monday_new_subitem_created": {
+      "key": "lc_monday_new_subitem_created",
+      "name": "New SubItem In Board",
+      "app": "Monday.com",
+      "description": "Triggers when a new subitem is created in a board in Monday.com",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=monday.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "board_id",
+          "label": "Board Id",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "lc_monday_new_subitem_created"
+    },
+    "notion_new_database_item": {
+      "key": "notion_new_database_item",
+      "name": "New Database Item",
+      "app": "Notion",
+      "description": "Triggers when a new item is added to a specified Notion database.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.notion.so",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "database_id",
+          "label": "Database ID",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "notion_new_database_item"
+    },
+    "notion_updated_database_item": {
+      "key": "notion_updated_database_item",
+      "name": "Updated Database Item",
+      "app": "Notion",
+      "description": "Triggers when a database item is updated in Notion.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.notion.so",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "database_id",
+          "label": "Database ID",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "notion_updated_database_item"
+    },
+    "notion_page_updated": {
+      "key": "notion_page_updated",
+      "name": "Page Updated",
+      "app": "Notion",
+      "description": "Trigger when a page is updated in Notion.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.notion.so",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "id",
+          "label": "Page ID",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "notion_page_updated"
+    },
+    "notion_comment_added": {
+      "key": "notion_comment_added",
+      "name": "Comment Added",
+      "app": "Notion",
+      "description": "Triggered when a new comment is added to a Notion page.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.notion.so",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "id",
+          "label": "Page ID",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "notion_comment_added"
+    },
+    "tiktok_comment_on_post": {
+      "key": "tiktok_comment_on_post",
+      "name": "TikTok - Comment(s) on a Video",
+      "app": "communication",
+      "description": "by default applicable to all videos, if nothing is selected",
+      "icon": "<svg width=\"28\" height=\"27\" viewBox=\"0 0 28 27\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7.74842 16.5562C7.87865 15.478 8.32088 14.8743 9.15423 14.2554C10.3466 13.4172 11.8361 13.8914 11.8361 13.8914V11.0787C12.1982 11.0695 12.5604 11.0909 12.9186 11.1429V14.7624C12.9186 14.7624 11.4296 14.2883 10.2372 15.1269C9.40428 15.7453 8.96115 16.3495 8.83138 17.4277C8.82731 18.0132 8.93719 18.7786 9.44317 19.4403C9.31807 19.3762 9.19056 19.3031 9.06063 19.2211C7.94603 18.4726 7.743 17.3497 7.74842 16.5562ZM19.0686 5.87816C18.2483 4.97933 17.9382 4.07183 17.826 3.43433H18.8579C18.8579 3.43433 18.6521 5.10587 20.1515 6.74968L20.1723 6.77178C19.7682 6.51759 19.3976 6.21754 19.0686 5.87816ZM24.0393 8.42643V11.9732C24.0393 11.9732 22.7226 11.9216 21.7482 11.6737C20.3876 11.327 19.5131 10.7953 19.5131 10.7953C19.5131 10.7953 18.909 10.4161 18.8601 10.3896V17.7138C18.8601 18.1216 18.7485 19.14 18.408 19.9894C17.9635 21.1006 17.2775 21.83 17.1514 21.9791C17.1514 21.9791 16.3171 22.965 14.8453 23.629C13.5186 24.2279 12.3538 24.2127 12.0056 24.2279C12.0056 24.2279 9.99211 24.3076 8.18025 23.1301C7.78845 22.8706 7.42272 22.5767 7.0878 22.2521L7.09684 22.2586C8.90916 23.4361 10.9222 23.3564 10.9222 23.3564C11.2709 23.3412 12.4357 23.3564 13.7619 22.7574C15.2324 22.0935 16.068 21.1076 16.068 21.1076C16.1928 20.9585 16.8819 20.2291 17.3246 19.1175C17.6641 18.2685 17.7767 17.2496 17.7767 16.8418V9.51855C17.8256 9.54542 18.4292 9.92462 18.4292 9.92462C18.4292 9.92462 19.3042 10.4568 20.6648 10.8031C21.6397 11.051 22.9559 11.1026 22.9559 11.1026V8.32329C23.4063 8.42426 23.7902 8.45157 24.0393 8.42643Z\" fill=\"#EE1D52\"/> <path d=\"M22.9564 8.32328V11.1017C22.9564 11.1017 21.6401 11.0501 20.6652 10.8022C19.3046 10.4555 18.4297 9.92376 18.4297 9.92376C18.4297 9.92376 17.826 9.54455 17.7772 9.51768V16.8427C17.7772 17.2505 17.6655 18.2694 17.325 19.1183C16.8805 20.23 16.1946 20.9593 16.0684 21.1084C16.0684 21.1084 15.2337 22.0944 13.7624 22.7583C12.4361 23.3572 11.2713 23.3421 10.9227 23.3572C10.9227 23.3572 8.90963 23.437 7.09732 22.2595L7.08827 22.253C6.89693 22.0677 6.71682 21.8721 6.54883 21.6671C5.9705 20.9619 5.61599 20.1281 5.52692 19.8902C5.52676 19.8892 5.52676 19.8882 5.52692 19.8872C5.38358 19.4737 5.08243 18.4808 5.12358 17.5192C5.19638 15.8225 5.79325 14.7811 5.95105 14.5202C6.369 13.8087 6.91259 13.1722 7.55763 12.6389C8.12684 12.1787 8.77202 11.8125 9.46671 11.5554C10.2177 11.2536 11.0219 11.0918 11.8361 11.0787V13.8913C11.8361 13.8913 10.3466 13.419 9.15471 14.2554C8.32135 14.8743 7.87912 15.478 7.7489 16.5562C7.74347 17.3497 7.9465 18.4726 9.0602 19.2215C9.19013 19.3038 9.31764 19.3769 9.44274 19.4408C9.6373 19.6937 9.87411 19.9141 10.1436 20.093C11.2315 20.7817 12.1431 20.8298 13.3088 20.3825C14.0861 20.0835 14.6712 19.4096 14.9425 18.6629C15.113 18.1965 15.1107 17.7272 15.1107 17.2418V3.43433H17.8238C17.9359 4.07183 18.2461 4.97933 19.0664 5.87816C19.3954 6.21754 19.766 6.51759 20.1701 6.77178C20.2895 6.8953 20.8999 7.50593 21.6835 7.8808C22.0887 8.07458 22.5158 8.22305 22.9564 8.32328Z\" fill=\"black\"/> <path d=\"M4.44711 19.0266V19.0288L4.51443 19.2112C4.5067 19.19 4.48168 19.1254 4.44711 19.0266Z\" fill=\"#69C9D0\"/> <path d=\"M9.46675 11.5555C8.77206 11.8126 8.12688 12.1788 7.55767 12.639C6.91242 13.1735 6.36897 13.8114 5.95155 14.5242C5.79374 14.7842 5.19687 15.8265 5.12407 17.5232C5.08292 18.4849 5.38407 19.4777 5.52741 19.8912C5.52725 19.8922 5.52725 19.8932 5.52741 19.8942C5.61784 20.13 5.97099 20.9638 6.54932 21.6711C6.71731 21.8761 6.89742 22.0717 7.08876 22.257C6.4757 21.8506 5.92895 21.3593 5.46637 20.7991C4.89301 20.1001 4.53941 19.2749 4.44717 19.0313C4.44706 19.0296 4.44706 19.0279 4.44717 19.0261V19.0231C4.30338 18.6101 4.00132 17.6168 4.04338 16.6538C4.11618 14.9571 4.71304 13.9157 4.87085 13.6548C5.28815 12.9419 5.83162 12.304 6.47697 11.7696C7.04607 11.3093 7.69128 10.9431 8.38605 10.6862C8.81942 10.5138 9.27087 10.3867 9.73262 10.307C10.4285 10.1905 11.1392 10.1805 11.8384 10.2771V11.0788C11.0234 11.0916 10.2184 11.2534 9.46675 11.5555Z\" fill=\"#69C9D0\"/> <path d=\"M17.826 3.43446H15.113V17.2424C15.113 17.7278 15.113 18.1958 14.9448 18.6634C14.6708 19.4097 14.0879 20.0836 13.3111 20.3826C12.1449 20.8316 11.2333 20.7818 10.1459 20.0932C9.87589 19.915 9.63848 19.6954 9.44318 19.4431C10.3697 19.9168 11.199 19.9085 12.2263 19.5133C13.0027 19.2143 13.5864 18.5403 13.8596 17.7936C14.0305 17.3273 14.0282 16.858 14.0282 16.373V2.5625H17.7745C17.7745 2.5625 17.7324 2.90574 17.826 3.43446ZM22.9564 7.55504V8.32342C22.5166 8.22302 22.0902 8.07456 21.6858 7.88094C20.9022 7.50606 20.2917 6.89543 20.1724 6.77192C20.3109 6.85908 20.4546 6.93838 20.6028 7.00941C21.5555 7.46533 22.4938 7.60141 22.9564 7.55504Z\" fill=\"#69C9D0\"/> </svg>",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "tiktok.pageId",
+          "label": "Account is",
+          "type": "select",
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "Dynamic",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "conversations-api",
+            "route": "providers/tiktok/workflow-config"
+          }
+        }
+      ],
+      "customVarPrefix": "tiktok_comment_on_post"
+    },
+    "transcript_generated": {
+      "key": "transcript_generated",
+      "name": "Transcript Generated",
+      "app": "communication",
+      "description": "Triggers when a transcript generated",
+      "icon": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M9.00061 13.5C11.2106 13.5 13.0006 11.71 13.0006 9.5C13.0006 7.29 11.2106 5.5 9.00061 5.5C6.79061 5.5 5.00061 7.29 5.00061 9.5C5.00061 11.71 6.79061 13.5 9.00061 13.5ZM9.00061 7.5C10.1006 7.5 11.0006 8.4 11.0006 9.5C11.0006 10.6 10.1006 11.5 9.00061 11.5C7.90061 11.5 7.00061 10.6 7.00061 9.5C7.00061 8.4 7.90061 7.5 9.00061 7.5ZM9.00061 15.5C6.33061 15.5 1.00061 16.84 1.00061 19.5V21.5H17.0006V19.5C17.0006 16.84 11.6706 15.5 9.00061 15.5ZM3.00061 19.5C3.22061 18.78 6.31061 17.5 9.00061 17.5C11.7006 17.5 14.8006 18.79 15.0006 19.5H3.00061ZM15.0806 7.55C15.9206 8.73 15.9206 10.26 15.0806 11.44L16.7606 13.13C18.7806 11.11 18.7806 8.06 16.7606 5.86L15.0806 7.55ZM20.0706 2.5L18.4406 4.13C21.2106 7.15 21.2106 11.69 18.4406 14.87L20.0706 16.5C23.9706 12.61 23.9806 6.55 20.0706 2.5Z\" fill=\"#155EEF\"/> </svg>",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "call_type",
+          "label": "Type",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Calls",
+              "value": "call"
+            },
+            {
+              "label": "IVR",
+              "value": "ivr"
+            },
+            {
+              "label": "Voice AI",
+              "value": "voice_ai"
+            }
+          ],
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "Dynamic",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "",
+            "route": ""
+          }
+        },
+        {
+          "field": "call_duration",
+          "label": "Duration (seconds)",
+          "type": "numerical",
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "transcript_generated"
+    },
+    "ig_follower_added": {
+      "key": "ig_follower_added",
+      "name": "Instagram New Follower",
+      "app": "communication",
+      "description": "To auto DM new followers, add the Instagram DM or Interactive Messenger Action to this workflow trigger and publish it.",
+      "icon": "<svg width=\"27\" height=\"36\" viewBox=\"0 0 27 36\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <rect x=\"1.6875\" y=\"5.7375\" width=\"23.625\" height=\"23.625\" rx=\"8.1\" fill=\"url(#paint0_radial_176_58640)\"/> <rect x=\"1.6875\" y=\"5.7375\" width=\"23.625\" height=\"23.625\" rx=\"8.1\" fill=\"url(#paint1_radial_176_58640)\"/> <rect x=\"1.6875\" y=\"5.7375\" width=\"23.625\" height=\"23.625\" rx=\"8.1\" fill=\"url(#paint2_radial_176_58640)\"/> <path d=\"M19.4062 12.9094C19.4062 13.6084 18.8396 14.175 18.1406 14.175C17.4416 14.175 16.875 13.6084 16.875 12.9094C16.875 12.2104 17.4416 11.6438 18.1406 11.6438C18.8396 11.6438 19.4062 12.2104 19.4062 12.9094Z\" fill=\"white\"/> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M13.5 21.7688C15.83 21.7688 17.7188 19.88 17.7188 17.55C17.7188 15.2201 15.83 13.3313 13.5 13.3313C11.17 13.3313 9.28125 15.2201 9.28125 17.55C9.28125 19.88 11.17 21.7688 13.5 21.7688ZM13.5 20.0813C14.898 20.0813 16.0312 18.948 16.0312 17.55C16.0312 16.152 14.898 15.0188 13.5 15.0188C12.102 15.0188 10.9688 16.152 10.9688 17.55C10.9688 18.948 12.102 20.0813 13.5 20.0813Z\" fill=\"white\"/> <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M5.0625 17.2125C5.0625 14.3772 5.0625 12.9596 5.61428 11.8767C6.09964 10.9241 6.8741 10.1496 7.82667 9.66428C8.9096 9.1125 10.3272 9.1125 13.1625 9.1125H13.8375C16.6728 9.1125 18.0904 9.1125 19.1733 9.66428C20.1259 10.1496 20.9004 10.9241 21.3857 11.8767C21.9375 12.9596 21.9375 14.3772 21.9375 17.2125V17.8875C21.9375 20.7228 21.9375 22.1404 21.3857 23.2233C20.9004 24.1759 20.1259 24.9504 19.1733 25.4357C18.0904 25.9875 16.6728 25.9875 13.8375 25.9875H13.1625C10.3272 25.9875 8.9096 25.9875 7.82667 25.4357C6.8741 24.9504 6.09964 24.1759 5.61428 23.2233C5.0625 22.1404 5.0625 20.7228 5.0625 17.8875V17.2125ZM13.1625 10.8H13.8375C15.283 10.8 16.2656 10.8013 17.0251 10.8634C17.7649 10.9238 18.1433 11.0334 18.4072 11.1679C19.0423 11.4914 19.5586 12.0077 19.8821 12.6428C20.0166 12.9067 20.1262 13.2851 20.1866 14.0249C20.2487 14.7844 20.25 15.767 20.25 17.2125V17.8875C20.25 19.333 20.2487 20.3156 20.1866 21.0751C20.1262 21.815 20.0166 22.1933 19.8821 22.4572C19.5586 23.0923 19.0423 23.6086 18.4072 23.9321C18.1433 24.0666 17.7649 24.1762 17.0251 24.2366C16.2656 24.2987 15.283 24.3 13.8375 24.3H13.1625C11.717 24.3 10.7344 24.2987 9.97488 24.2366C9.23505 24.1762 8.85671 24.0666 8.59278 23.9321C7.95774 23.6086 7.44143 23.0923 7.11785 22.4572C6.98338 22.1933 6.87381 21.815 6.81337 21.0751C6.75131 20.3156 6.75 19.333 6.75 17.8875V17.2125C6.75 15.767 6.75131 14.7844 6.81337 14.0249C6.87381 13.2851 6.98338 12.9067 7.11785 12.6428C7.44143 12.0077 7.95774 11.4914 8.59278 11.1679C8.85671 11.0334 9.23505 10.9238 9.97488 10.8634C10.7344 10.8013 11.717 10.8 13.1625 10.8Z\" fill=\"white\"/> <defs> <radialGradient id=\"paint0_radial_176_58640\" cx=\"0\" cy=\"0\" r=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"translate(10.125 23.4563) rotate(-55.3758) scale(21.5322)\"> <stop stop-color=\"#B13589\"/> <stop offset=\"0.79309\" stop-color=\"#C62F94\"/> <stop offset=\"1\" stop-color=\"#8A3AC8\"/> </radialGradient> <radialGradient id=\"paint1_radial_176_58640\" cx=\"0\" cy=\"0\" r=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"translate(9.28125 30.2063) rotate(-65.1363) scale(19.0639)\"> <stop stop-color=\"#E0E8B7\"/> <stop offset=\"0.444662\" stop-color=\"#FB8A2E\"/> <stop offset=\"0.71474\" stop-color=\"#E2425C\"/> <stop offset=\"1\" stop-color=\"#E2425C\" stop-opacity=\"0\"/> </radialGradient> <radialGradient id=\"paint2_radial_176_58640\" cx=\"0\" cy=\"0\" r=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"translate(0.421876 6.58125) rotate(-8.1301) scale(32.8142 7.01861)\"> <stop offset=\"0.156701\" stop-color=\"#406ADC\"/> <stop offset=\"0.467799\" stop-color=\"#6A45BE\"/> <stop offset=\"1\" stop-color=\"#6A45BE\" stop-opacity=\"0\"/> </radialGradient> </defs> </svg>",
+      "type": "INTERNAL",
+      "filters": [
+        {
+          "field": "instagram.pageId",
+          "label": "Account Is",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "ig_follower_added"
+    },
+    "basecamp_new_todo_created": {
+      "key": "basecamp_new_todo_created",
+      "name": "New To-do",
+      "app": "BaseCamp",
+      "description": "Triggers when a new to-do is created in a Basecamp project.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "to_do_set",
+          "label": "Todo Set",
+          "type": "select",
+          "altersDynamicField": true
+        },
+        {
+          "field": "todolist_id",
+          "label": "Todo List",
+          "type": "select",
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "basecamp_new_todo_created"
+    },
+    "basecamp_new_comment_added": {
+      "key": "basecamp_new_comment_added",
+      "name": "New Comment Added",
+      "app": "BaseCamp",
+      "description": "Triggers when a new comment is added to a Basecamp project.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "basecamp_new_comment_added"
+    },
+    "basecamp_new_document": {
+      "key": "basecamp_new_document",
+      "name": "New Document",
+      "app": "BaseCamp",
+      "description": "Triggers when a new document is created in BaseCamp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "parent_id",
+          "label": "Folder",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "basecamp_new_document"
+    },
+    "basecamp_project_created": {
+      "key": "basecamp_project_created",
+      "name": "New Project",
+      "app": "BaseCamp",
+      "description": "Triggers when a new project is created in Basecamp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "name",
+          "label": "Name",
+          "type": "string"
+        }
+      ],
+      "customVarPrefix": "basecamp_project_created"
+    },
+    "basecamp_new_message_posted": {
+      "key": "basecamp_new_message_posted",
+      "name": "New Message Posted",
+      "app": "BaseCamp",
+      "description": "Trigger when a new message is posted in a Basecamp project.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select_with_pagination",
+          "required": true,
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "basecamp_new_message_posted"
+    },
+    "basecamp_new_activity": {
+      "key": "basecamp_new_activity",
+      "name": "New Activity",
+      "app": "BaseCamp",
+      "description": "Triggers when there is new activity in BaseCamp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select_with_pagination",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "activity_type",
+          "label": "Types",
+          "type": "multiselect",
+          "options": [
+            {
+              "label": "Comments",
+              "value": "Comment"
+            },
+            {
+              "label": "Documents",
+              "value": "Document"
+            },
+            {
+              "label": "Google Documents",
+              "value": "GoogleDocument"
+            },
+            {
+              "label": "Messages",
+              "value": "Message"
+            },
+            {
+              "label": "Questions",
+              "value": "Question"
+            },
+            {
+              "label": "Questionnaire",
+              "value": "Question::Answer"
+            },
+            {
+              "label": "Schedule Entries",
+              "value": "Schedule::Entry"
+            },
+            {
+              "label": "To-dos",
+              "value": "Todo"
+            },
+            {
+              "label": "To-do lists",
+              "value": "Todolist"
+            },
+            {
+              "label": "Uploads",
+              "value": "Upload"
+            }
+          ]
+        },
+        {
+          "field": "events",
+          "label": "Events",
+          "type": "multiselect",
+          "options": [
+            {
+              "label": "Created",
+              "value": "_created"
+            },
+            {
+              "label": "Activated",
+              "value": "_active"
+            },
+            {
+              "label": "Title/Content Updated",
+              "value": "_updated"
+            },
+            {
+              "label": "Deleted",
+              "value": "_deleted"
+            },
+            {
+              "label": "Archived",
+              "value": "_archived"
+            },
+            {
+              "label": "Unarchived",
+              "value": "_unarchived"
+            },
+            {
+              "label": "Trashed",
+              "value": "_trashed"
+            },
+            {
+              "label": "Untrashed",
+              "value": "_untrashed"
+            },
+            {
+              "label": "Copied",
+              "value": "_copied"
+            },
+            {
+              "label": "Inserted",
+              "value": "_inserted"
+            },
+            {
+              "label": "Publicized",
+              "value": "_publicized"
+            },
+            {
+              "label": "Subscribers Updated",
+              "value": "_subscribers_changed"
+            },
+            {
+              "label": "Completed (Only To-dos)",
+              "value": "todo_completed"
+            },
+            {
+              "label": "Un-Completed (Only To-dos)",
+              "value": "todo_uncompleted"
+            },
+            {
+              "label": "Paused (Only Questions)",
+              "value": "question_paused"
+            },
+            {
+              "label": "Resumed (Only Questions)",
+              "value": "question_resumed"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "basecamp_new_activity"
+    },
+    "basecamp_new_todo_list": {
+      "key": "basecamp_new_todo_list",
+      "name": "New To-do List",
+      "app": "BaseCamp",
+      "description": "Triggers when a new to-do list is created in BaseCamp.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=basecamp.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "account_id",
+          "label": "Account",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "parent_id",
+          "label": "Todo Set",
+          "type": "select",
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "basecamp_new_todo_list"
+    },
+    "asana_it_asana_task_created": {
+      "key": "asana_it_asana_task_created",
+      "name": "New Task",
+      "app": "Asana",
+      "description": "Trigger when a new task is created in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_task_created"
+    },
+    "asana_it_asana_task_deleted": {
+      "key": "asana_it_asana_task_deleted",
+      "name": "Task Deleted",
+      "app": "Asana",
+      "description": "Triggers when a task is deleted in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_task_deleted"
+    },
+    "asana_it_asana_task_updated": {
+      "key": "asana_it_asana_task_updated",
+      "name": "Task Updated",
+      "app": "Asana",
+      "description": "Triggers when a task in Asana is updated.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "completed",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "Completed",
+              "value": "true"
+            },
+            {
+              "label": "Not Completed",
+              "value": "false"
+            }
+          ]
+        },
+        {
+          "field": "field",
+          "label": "Fields Changed",
+          "type": "multiselect",
+          "options": [
+            {
+              "label": "Name",
+              "value": "name"
+            },
+            {
+              "label": "Assignee",
+              "value": "assignee"
+            },
+            {
+              "label": "Completed",
+              "value": "completed"
+            },
+            {
+              "label": "Due At",
+              "value": "due_at"
+            },
+            {
+              "label": "Due On",
+              "value": "due_on"
+            },
+            {
+              "label": "Liked",
+              "value": "likes"
+            },
+            {
+              "label": "Custom Fields",
+              "value": "custom_fields"
+            },
+            {
+              "label": "Resource SubType",
+              "value": "resource_subtype"
+            },
+            {
+              "label": "Followers",
+              "value": "followers"
+            },
+            {
+              "label": "Tags",
+              "value": "tag"
+            },
+            {
+              "label": "Actual Time Minutes",
+              "value": "actual_time_minutes"
+            },
+            {
+              "label": "Project",
+              "value": "project"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_task_updated"
+    },
+    "asana_it_asana_project_created": {
+      "key": "asana_it_asana_project_created",
+      "name": "New Project",
+      "app": "Asana",
+      "description": "Trigger when a new project is created in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_project_created"
+    },
+    "asana_it_asana_comment_on_task": {
+      "key": "asana_it_asana_comment_on_task",
+      "name": "New Comment Added To Task",
+      "app": "Asana",
+      "description": "Triggers instantly when a new comment is added to a task in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "target.gid",
+          "label": "Task",
+          "type": "select_with_pagination"
+        },
+        {
+          "field": "comment_text",
+          "label": "Comment Text",
+          "type": "string"
+        },
+        {
+          "field": "created_by.name",
+          "label": "Commenter Name",
+          "type": "string"
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_comment_on_task"
+    },
+    "asana_it_asana_tag_added_to_task": {
+      "key": "asana_it_asana_tag_added_to_task",
+      "name": "Tag Added To Task",
+      "app": "Asana",
+      "description": "Triggers when a tag is added to a task in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "tag_gid",
+          "label": "Tags",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_tag_added_to_task"
+    },
+    "asana_it_asana_task_moved_to_section": {
+      "key": "asana_it_asana_task_moved_to_section",
+      "name": "Task Moved",
+      "app": "Asana",
+      "description": "Triggered when a task is moved to a different section in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "section_gids",
+          "label": "Sections",
+          "type": "multiselect"
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_task_moved_to_section"
+    },
+    "asana_it_asana_attachment_added_to_task": {
+      "key": "asana_it_asana_attachment_added_to_task",
+      "name": "New Attachment Added to Task",
+      "app": "Asana",
+      "description": "Triggered when a new attachment is added for a task.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_attachment_added_to_task"
+    },
+    "asana_it_asana_new_subtask": {
+      "key": "asana_it_asana_new_subtask",
+      "name": "New Subtask",
+      "app": "Asana",
+      "description": "Trigger when a new task is created in Asana.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=asana.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "workspace_id",
+          "label": "Workspace",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "parent.gid",
+          "label": "Task",
+          "type": "select_with_pagination"
+        }
+      ],
+      "customVarPrefix": "asana_it_asana_new_subtask"
+    },
+    "airtable_new_record_created": {
+      "key": "airtable_new_record_created",
+      "name": "New Record Created",
+      "app": "Airtable",
+      "description": "Triggers when a new record is created in Airtable.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=airtable.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "base_id",
+          "label": "Base",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "table_id",
+          "label": "Table",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        }
+      ],
+      "customVarPrefix": "airtable_new_record_created"
+    },
+    "airtable_record_updated": {
+      "key": "airtable_record_updated",
+      "name": "Record Updated",
+      "app": "Airtable",
+      "description": "Triggered when a record in Airtable is updated.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=airtable.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "base_id",
+          "label": "Base",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "table_id",
+          "label": "Table",
+          "type": "select",
+          "required": true,
+          "altersDynamicField": true
+        },
+        {
+          "field": "DYNAMIC",
+          "label": "DYNAMIC",
+          "type": "DYNAMIC",
+          "dynamicFrom": {
+            "service": "",
+            "route": ""
+          }
+        }
+      ],
+      "customVarPrefix": "airtable_record_updated"
+    },
+    "google_contacts_contact_created": {
+      "key": "google_contacts_contact_created",
+      "name": "New Contact",
+      "app": "Google Contacts",
+      "description": "Trigger when a new contact is created in Google Contacts.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=contacts.google.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "name",
+          "label": "Name",
+          "type": "string"
+        },
+        {
+          "field": "firstName",
+          "label": "First Name",
+          "type": "string"
+        },
+        {
+          "field": "lastName",
+          "label": "Last Name",
+          "type": "string"
+        }
+      ],
+      "customVarPrefix": "google_contacts_contact_created"
+    },
+    "google_contacts_new_group": {
+      "key": "google_contacts_new_group",
+      "name": "New Group",
+      "app": "Google Contacts",
+      "description": "Triggered when a new contact group is created in Google Contacts.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=contacts.google.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "name",
+          "label": "Name",
+          "type": "string"
+        },
+        {
+          "field": "groupType",
+          "label": "Group Type",
+          "type": "select",
+          "options": [
+            {
+              "label": "USER_CONTACT_GROUP",
+              "value": "USER_CONTACT_GROUP"
+            },
+            {
+              "label": "SYSTEM_CONTACT_GROUP",
+              "value": "SYSTEM_CONTACT_GROUP"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "google_contacts_new_group"
+    },
+    "survey_monkey_it_response_completed": {
+      "key": "survey_monkey_it_response_completed",
+      "name": "Survey Monkey Response Completed",
+      "app": "Survey Monkey",
+      "description": "Trigger when a response is completed on a SurveyMonkey survey.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.surveymonkey.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "survey_id",
+          "label": "Survey Id",
+          "type": "select",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "surveymonkey_response_completed"
+    },
+    "lc_manus_new_task_created": {
+      "key": "lc_manus_new_task_created",
+      "name": "New Task Created",
+      "app": "Manus AI",
+      "description": "Triggers when a new task is created in Manus AI.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.manus.ai",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_manus_new_task_created"
+    },
+    "lc_manus_task_stopped": {
+      "key": "lc_manus_task_stopped",
+      "name": "Task Stopped",
+      "app": "Manus AI",
+      "description": "Trigger when a task is stopped in Manus AI.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.manus.ai",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_manus_task_stopped"
+    },
+    "typeform_new_entry": {
+      "key": "typeform_new_entry",
+      "name": "New Entry",
+      "app": "Typeform",
+      "description": "Triggers when a new entry is submitted in Typeform.",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=www.typeform.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "form_id",
+          "label": "Form",
+          "type": "select_with_pagination",
+          "required": true
+        }
+      ],
+      "customVarPrefix": "typeform_new_entry"
+    },
+    "apify_actor_run_finished": {
+      "key": "apify_actor_run_finished",
+      "name": "Finished actor run",
+      "app": "Apify",
+      "description": "Triggers when an Apify Actor run finishes (succeeds or fails).",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=apify.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "actor_id",
+          "label": "Actor",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "eventType",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "SUCCEEDED",
+              "value": "ACTOR.RUN.SUCCEEDED"
+            },
+            {
+              "label": "FAILED",
+              "value": "ACTOR.RUN.FAILED"
+            },
+            {
+              "label": "TIMED-OUT",
+              "value": "ACTOR.RUN.TIMED_OUT"
+            },
+            {
+              "label": "ABORTED",
+              "value": "ACTOR.RUN.ABORTED"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "apify_actor_run_finished"
+    },
+    "apify_task_run_finished": {
+      "key": "apify_task_run_finished",
+      "name": "Finished task run",
+      "app": "Apify",
+      "description": "Triggers when an Apify Task run finishes (succeeds or fails).",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain_url=apify.com",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "task_id",
+          "label": "Task",
+          "type": "select",
+          "required": true
+        },
+        {
+          "field": "eventType",
+          "label": "Status",
+          "type": "select",
+          "options": [
+            {
+              "label": "SUCCEEDED",
+              "value": "ACTOR.RUN.SUCCEEDED"
+            },
+            {
+              "label": "FAILED",
+              "value": "ACTOR.RUN.FAILED"
+            },
+            {
+              "label": "TIMED-OUT",
+              "value": "ACTOR.RUN.TIMED_OUT"
+            },
+            {
+              "label": "ABORTED",
+              "value": "ACTOR.RUN.ABORTED"
+            }
+          ]
+        }
+      ],
+      "customVarPrefix": "apify_task_run_finished"
+    },
+    "lc_cal_com_booking_created": {
+      "key": "lc_cal_com_booking_created",
+      "name": "Booking created",
+      "app": "Cal.com",
+      "description": "Triggers when a new booking is created in Cal.com.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/cal_com/cal_com_brand_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_cal_com_booking_created"
+    },
+    "lc_cal_com_booking_cancelled": {
+      "key": "lc_cal_com_booking_cancelled",
+      "name": "Booking cancelled",
+      "app": "Cal.com",
+      "description": "Triggers when a booking is cancelled in Cal.com.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/cal_com/cal_com_brand_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_cal_com_booking_cancelled"
+    },
+    "lc_cal_com_booking_rescheduled": {
+      "key": "lc_cal_com_booking_rescheduled",
+      "name": "Booking rescheduled",
+      "app": "Cal.com",
+      "description": "Triggers when a booking is rescheduled in Cal.com.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/cal_com/cal_com_brand_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_cal_com_booking_rescheduled"
+    },
+    "lc_cal_com_meeting_ended": {
+      "key": "lc_cal_com_meeting_ended",
+      "name": "Meeting ended",
+      "app": "Cal.com",
+      "description": "Triggers when a Cal.com meeting ends.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/cal_com/cal_com_brand_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_cal_com_meeting_ended"
+    },
+    "lc_cal_com_ooo_created": {
+      "key": "lc_cal_com_ooo_created",
+      "name": "Out of office created / updated",
+      "app": "Cal.com",
+      "description": "Triggers when an out-of-office entry is created or updated in Cal.com.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/cal_com/cal_com_brand_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_cal_com_ooo_created"
+    },
+    "lc_cal_com_recording_ready": {
+      "key": "lc_cal_com_recording_ready",
+      "name": "New Recording",
+      "app": "Cal.com",
+      "description": "Triggers when a recording is ready in Cal.com.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/cal_com/cal_com_brand_logo.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_cal_com_recording_ready"
+    },
+    "lc_todoist_new_task": {
+      "key": "lc_todoist_new_task",
+      "name": "New Incomplete Task",
+      "app": "Todoist",
+      "description": "Triggers when a new incomplete task is added to a project.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/todoist/todoist-brand.png",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "allowCustomInputPicker": true
+        }
+      ],
+      "customVarPrefix": "lc_todoist_new_task"
+    },
+    "lc_todoist_task_completed": {
+      "key": "lc_todoist_task_completed",
+      "name": "New Completed Task",
+      "app": "Todoist",
+      "description": "Triggers when a task is completed in Todoist.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/todoist/todoist-brand.png",
+      "type": "INTEGRATION_AI",
+      "filters": [
+        {
+          "field": "project_id",
+          "label": "Project",
+          "type": "select",
+          "required": true,
+          "allowCustomInputPicker": true
+        }
+      ],
+      "customVarPrefix": "lc_todoist_task_completed"
+    },
+    "lc_todoist_new_project": {
+      "key": "lc_todoist_new_project",
+      "name": "New Project",
+      "app": "Todoist",
+      "description": "Triggers when a new project is created in Todoist.",
+      "icon": "https://storage.googleapis.com/integration-apps-assets-leadconnectorhq-com/assets/todoist/todoist-brand.png",
+      "type": "INTEGRATION_AI",
+      "filters": [],
+      "customVarPrefix": "lc_todoist_new_project"
+    },
+    "birthday_reminder": {
+      "key": "birthday_reminder",
+      "name": "Birthday Reminder",
+      "nameI18nKey": "birthday_reminder",
+      "descriptionI18nKey": "runs_on_each_contacts_birthday_at",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:cake",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "contact_changed": {
+      "key": "contact_changed",
+      "name": "Contact Changed",
+      "nameI18nKey": "contact_changed",
+      "descriptionI18nKey": "fires_when_the_chosen_contact_fields",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:users",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "contact_created": {
+      "key": "contact_created",
+      "name": "Contact Created",
+      "nameI18nKey": "contact_created",
+      "descriptionI18nKey": "activates_the_moment_a_new_contact",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:user-add",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "dnd_contact": {
+      "key": "dnd_contact",
+      "name": "Contact Dnd",
+      "nameI18nKey": "contact_dnd",
+      "descriptionI18nKey": "triggers_when_donotdisturb_is_enabled_or",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:x-circle",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "contact_tag": {
+      "key": "contact_tag",
+      "name": "Contact Tag",
+      "nameI18nKey": "contact_tag",
+      "descriptionI18nKey": "runs_when_the_specified_tag_is",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:tag",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "custom_date_reminder": {
+      "key": "custom_date_reminder",
+      "name": "Custom Date Reminder",
+      "nameI18nKey": "custom_date_reminder",
+      "descriptionI18nKey": "enrolls_contacts_on_a_date_stored",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:calendar",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "note_add": {
+      "key": "note_add",
+      "name": "Note Added",
+      "nameI18nKey": "note_added",
+      "descriptionI18nKey": "fires_whenever_a_new_note_is",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:document",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "note_changed": {
+      "key": "note_changed",
+      "name": "Note Changed",
+      "nameI18nKey": "note_changed",
+      "descriptionI18nKey": "activates_when_an_existing_note_is",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:document-duplicate",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "task_added": {
+      "key": "task_added",
+      "name": "Task Added",
+      "nameI18nKey": "task_added",
+      "descriptionI18nKey": "triggers_when_a_task_is_created",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:check",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "task_due_date_reminder": {
+      "key": "task_due_date_reminder",
+      "name": "Task Reminder",
+      "nameI18nKey": "task_reminder",
+      "descriptionI18nKey": "runs_at_the_reminder_time_of",
+      "app": "contact",
+      "description": null,
+      "icon": "heroicons-outline:bell",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "inbound_webhook": {
+      "key": "inbound_webhook",
+      "name": "Inbound Webhook",
+      "nameI18nKey": "inbound_webhook",
+      "descriptionI18nKey": "starts_the_workflow_when_an_external",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-solid:rss",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "scheduler_trigger": {
+      "key": "scheduler_trigger",
+      "name": "Scheduler",
+      "nameI18nKey": "Scheduler",
+      "descriptionI18nKey": null,
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:clock",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "call_status": {
+      "key": "call_status",
+      "name": "Call Details",
+      "nameI18nKey": "call_details",
+      "descriptionI18nKey": "fires_after_a_call_ends_with",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:phone",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "mailgun_email_event": {
+      "key": "mailgun_email_event",
+      "name": "Email Events",
+      "nameI18nKey": "email_events",
+      "descriptionI18nKey": "triggers_on_open_click_bounce_or",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:mail",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "customer_reply": {
+      "key": "customer_reply",
+      "name": "Customer Replied",
+      "nameI18nKey": "customer_replied",
+      "descriptionI18nKey": "runs_when_a_customer_replies_to",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:chat-alt-2",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "inbound_trigger": {
+      "key": "inbound_trigger",
+      "name": "Inbound Trigger",
+      "nameI18nKey": "inbound_trigger",
+      "descriptionI18nKey": "trigger_description_inbound_trigger",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:inbox",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "conv_ai_trigger": {
+      "key": "conv_ai_trigger",
+      "name": "Conv Ai Trigger",
+      "nameI18nKey": "conv_ai_trigger",
+      "descriptionI18nKey": null,
+      "app": "events",
+      "description": null,
+      "icon": "mage:stars-a",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "blue",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "conv_ai_autonomous_trigger": {
+      "key": "conv_ai_autonomous_trigger",
+      "name": "Conv Ai Autonomous Trigger",
+      "nameI18nKey": "conv_ai_autonomous_trigger",
+      "descriptionI18nKey": null,
+      "app": "events",
+      "description": null,
+      "icon": "mage:stars-a",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "blue",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "form_submission": {
+      "key": "form_submission",
+      "name": "Form Submitted",
+      "nameI18nKey": "form_submitted",
+      "descriptionI18nKey": "activates_upon_submission_of_the_chosen",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:clipboard-list",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "survey_submission": {
+      "key": "survey_submission",
+      "name": "Survey Submitted",
+      "nameI18nKey": "survey_submitted",
+      "descriptionI18nKey": "fires_when_the_contact_completes_the",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:clipboard-list",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "trigger_link": {
+      "key": "trigger_link",
+      "name": "Trigger Link Clicked",
+      "nameI18nKey": "trigger_link_clicked",
+      "descriptionI18nKey": "runs_when_the_tracked_link_in",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:cursor-click",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "facebook_lead_gen": {
+      "key": "facebook_lead_gen",
+      "name": "Facebook Lead Form Submitted",
+      "nameI18nKey": "facebook_lead_form_submitted",
+      "descriptionI18nKey": "fires_each_time_your_fb_lead",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:clipboard-list",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "tik_tok_form_submitted": {
+      "key": "tik_tok_form_submitted",
+      "name": "Tiktok Form Submitted",
+      "nameI18nKey": "tiktok_form_submitted",
+      "descriptionI18nKey": "activates_when_a_tiktok_leadgen_form",
+      "app": "events",
+      "description": null,
+      "icon": "ic:baseline-tiktok",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "video_event": {
+      "key": "video_event",
+      "name": "Video Tracking",
+      "nameI18nKey": "video_tracking",
+      "descriptionI18nKey": "triggers_when_a_contact_reaches_the",
+      "app": "events",
+      "description": null,
+      "icon": "clarity:video-gallery-line",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "validation_error": {
+      "key": "validation_error",
+      "name": "Number Validation",
+      "nameI18nKey": "number_validation",
+      "descriptionI18nKey": "fires_after_a_phone_number_passes",
+      "app": "events",
+      "description": null,
+      "icon": "heroicons-outline:exclamation",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "appointment": {
+      "key": "appointment",
+      "name": "Appointment Status",
+      "nameI18nKey": "appointment_status",
+      "descriptionI18nKey": "fires_on_status_change_booked_cancelled",
+      "app": "appointments",
+      "description": null,
+      "icon": "heroicons-outline:calendar",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "customer_appointment": {
+      "key": "customer_appointment",
+      "name": "Customer Booked Appointment",
+      "nameI18nKey": "customer_booked_appointment",
+      "descriptionI18nKey": "activates_when_a_customer_books_via",
+      "app": "appointments",
+      "description": null,
+      "icon": "bx:calendar-check",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "opportunity_status_changed": {
+      "key": "opportunity_status_changed",
+      "name": "Opportunity Status Changed",
+      "nameI18nKey": "opportunity_status_changed",
+      "descriptionI18nKey": "triggers_when_an_opportunitys_status_is",
+      "app": "opportunities",
+      "description": null,
+      "icon": "heroicons-outline:switch-horizontal",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "opportunity_created": {
+      "key": "opportunity_created",
+      "name": "Opportunity Created",
+      "nameI18nKey": "opportunity_created",
+      "descriptionI18nKey": "runs_at_the_moment_a_new",
+      "app": "opportunities",
+      "description": null,
+      "icon": "heroicons-outline:switch-horizontal",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "opportunity_changed": {
+      "key": "opportunity_changed",
+      "name": "Opportunity Changed",
+      "nameI18nKey": "opportunity_changed",
+      "descriptionI18nKey": "fires_on_field_updates_within_an",
+      "app": "opportunities",
+      "description": null,
+      "icon": "heroicons-outline:switch-horizontal",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "pipeline_stage_updated": {
+      "key": "pipeline_stage_updated",
+      "name": "Pipeline Stage Changed",
+      "nameI18nKey": "pipeline_stage_changed",
+      "descriptionI18nKey": "activates_when_an_opportunity_moves_pipeline",
+      "app": "opportunities",
+      "description": null,
+      "icon": "heroicons-outline:refresh",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "opportunity_decay": {
+      "key": "opportunity_decay",
+      "name": "Stale Opportunities",
+      "nameI18nKey": "stale_opportunities",
+      "descriptionI18nKey": "triggers_opportunities_idle_longer_than_x",
+      "app": "opportunities",
+      "description": null,
+      "icon": "fa-solid:thermometer-empty",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "affiliate_created": {
+      "key": "affiliate_created",
+      "name": "Affiliate Created",
+      "nameI18nKey": "affiliate_created",
+      "descriptionI18nKey": "runs_when_a_new_affiliate_signs",
+      "app": "affiliates",
+      "description": null,
+      "icon": "ic:outline-handshake",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "category_started": {
+      "key": "category_started",
+      "name": "Category Started",
+      "nameI18nKey": "category_started",
+      "descriptionI18nKey": "runs_when_a_learner_begins_a",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:view-grid",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "category_completed": {
+      "key": "category_completed",
+      "name": "Category Completed",
+      "nameI18nKey": "category_completed",
+      "descriptionI18nKey": "activates_on_finishing_all_lessons_in",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:view-grid",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "lesson_started": {
+      "key": "lesson_started",
+      "name": "Lesson Started",
+      "nameI18nKey": "lesson_started",
+      "descriptionI18nKey": "fires_when_a_lesson_is_opened",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:check-circle",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "lesson_completed": {
+      "key": "lesson_completed",
+      "name": "Lesson Completed",
+      "nameI18nKey": "lesson_completed",
+      "descriptionI18nKey": "runs_when_the_lessons_completion_criteria",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:check-circle",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "membership_contact_created": {
+      "key": "membership_contact_created",
+      "name": "Membership New Signup",
+      "nameI18nKey": "membership_new_signup",
+      "descriptionI18nKey": "activates_when_a_user_signs_up",
+      "app": "courses",
+      "description": null,
+      "icon": "ant-design:user-add-outlined",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "offer_access_granted": {
+      "key": "offer_access_granted",
+      "name": "Offer Access Granted",
+      "nameI18nKey": "offer_access_granted",
+      "descriptionI18nKey": "fires_when_a_user_gains_access_to_offer",
+      "app": "courses",
+      "description": null,
+      "icon": "ic:outline-bookmark-add",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "offer_access_removed": {
+      "key": "offer_access_removed",
+      "name": "Offer Access Removed",
+      "nameI18nKey": "offer_access_removed",
+      "descriptionI18nKey": "activates_when_a_user_loses_access",
+      "app": "courses",
+      "description": null,
+      "icon": "ic:outline-bookmark-remove",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "product_access_granted": {
+      "key": "product_access_granted",
+      "name": "Product Access Granted",
+      "nameI18nKey": "product_access_granted",
+      "descriptionI18nKey": "runs_when_a_product_is_granted",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:check",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "product_access_removed": {
+      "key": "product_access_removed",
+      "name": "Product Access Removed",
+      "nameI18nKey": "product_access_removed",
+      "descriptionI18nKey": "fires_on_product_access_revocation",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:trash",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "product_started": {
+      "key": "product_started",
+      "name": "Product Started",
+      "nameI18nKey": "product_started",
+      "descriptionI18nKey": "activates_when_first_module_of_a",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:check-circle",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "product_completed": {
+      "key": "product_completed",
+      "name": "Product Completed",
+      "nameI18nKey": "product_completed",
+      "descriptionI18nKey": "fires_when_all_modules_of_a",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:check-circle",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "user_log_in": {
+      "key": "user_log_in",
+      "name": "User Login",
+      "nameI18nKey": "user_login",
+      "descriptionI18nKey": "triggers_on_each_successful_portal_login",
+      "app": "courses",
+      "description": null,
+      "icon": "heroicons-outline:user",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "invoice": {
+      "key": "invoice",
+      "name": "Invoice",
+      "nameI18nKey": "invoice",
+      "descriptionI18nKey": "fires_on_invoice_creation_send_or",
+      "app": "payments",
+      "description": null,
+      "icon": "la:file-invoice-dollar",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "payment_received": {
+      "key": "payment_received",
+      "name": "Payment Received",
+      "nameI18nKey": "payment_received",
+      "descriptionI18nKey": "activates_when_a_payment_record_posts",
+      "app": "payments",
+      "description": null,
+      "icon": "heroicons-outline:clipboard-list",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "two_step_form_submission": {
+      "key": "two_step_form_submission",
+      "name": "Order Form Submission",
+      "nameI18nKey": "order_form_submission",
+      "descriptionI18nKey": "runs_when_an_order_form_is",
+      "app": "payments",
+      "description": null,
+      "icon": "heroicons-outline:clipboard-list",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "order_submission": {
+      "key": "order_submission",
+      "name": "Order Submitted",
+      "nameI18nKey": "order_submitted",
+      "descriptionI18nKey": "fires_after_checkout_completion_in_funnelstore",
+      "app": "payments",
+      "description": null,
+      "icon": "heroicons-outline:clipboard-list",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "shopify_abandoned_cart": {
+      "key": "shopify_abandoned_cart",
+      "name": "Abandoned Checkout",
+      "nameI18nKey": "abandoned_checkout",
+      "descriptionI18nKey": "activates_when_a_cart_is_left",
+      "app": "shopify",
+      "description": null,
+      "icon": "mdi:cart-remove",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "shopify_order_placed": {
+      "key": "shopify_order_placed",
+      "name": "Order Placed",
+      "nameI18nKey": "order_placed",
+      "descriptionI18nKey": "fires_on_new_order_creation_in",
+      "app": "shopify",
+      "description": null,
+      "icon": "heroicons-outline:check",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "shopify_order_fulfilled": {
+      "key": "shopify_order_fulfilled",
+      "name": "Order Fulfilled",
+      "nameI18nKey": "order_fulfilled",
+      "descriptionI18nKey": "activates_when_an_order_is_marked",
+      "app": "shopify",
+      "description": null,
+      "icon": "mdi:cart-check",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "primary",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "ivr_incoming_call": {
+      "key": "ivr_incoming_call",
+      "name": "Start Ivr Trigger",
+      "nameI18nKey": "start_ivr_trigger",
+      "descriptionI18nKey": "runs_when_your_ivr_receives_an",
+      "app": "ivr",
+      "description": null,
+      "icon": "whh:circlecalloutgoing",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": null,
+        "labsKey": "workflows.ivr"
+      },
+      "source": "spa-bundle"
+    },
+    "facebook_comment_on_post": {
+      "key": "facebook_comment_on_post",
+      "name": "Facebook Comment On Post",
+      "nameI18nKey": "facebook_comment_on_post",
+      "descriptionI18nKey": "fires_on_new_comments_on_the",
+      "app": "fb_ig_events",
+      "description": null,
+      "icon": "ri:messenger-fill",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    },
+    "ig_comment_on_post": {
+      "key": "ig_comment_on_post",
+      "name": "Instagram Comment On Post",
+      "nameI18nKey": "instagram_comment_on_post",
+      "descriptionI18nKey": "activates_upon_ig_post_comment_from",
+      "app": "fb_ig_events",
+      "description": null,
+      "icon": "ri:instagram-fill",
+      "type": null,
+      "filters": [],
+      "_bundleMeta": {
+        "color": "green",
+        "labsKey": null
+      },
+      "source": "spa-bundle"
+    }
+  }
+}

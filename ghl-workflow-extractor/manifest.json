@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "GHL Workflow Extractor for OpenCode",
+  "version": "0.2.1",
+  "description": "Extrae workflows de GoHighLevel y los envía a OpenCode/Claude Code en tiempo real.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://client-app-automation-workflows.leadconnectorhq.com/*",
+    "https://backend.leadconnectorhq.com/*",
+    "https://*.leadconnectorhq.com/*",
+    "https://crm.dropi.co/*",
+    "http://localhost:8765/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://client-app-automation-workflows.leadconnectorhq.com/*",
+        "https://crm.dropi.co/*",
+        "https://*.leadconnectorhq.com/*"
+      ],
+      "js": ["content-opencode.js"],
+      "css": ["styles.css"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["page-hook.js"],
+      "matches": [
+        "https://client-app-automation-workflows.leadconnectorhq.com/*",
+        "https://crm.dropi.co/*",
+        "https://*.leadconnectorhq.com/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "GHL Workflow Extractor for OpenCode"
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
+}

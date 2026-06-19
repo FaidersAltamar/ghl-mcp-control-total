@@ -1,0 +1,21 @@
+# Captured payloads contain personally-identifiable IDs and Firebase signed URLs.
+# Keep them out of the public repo. The schemas are documented in docs/ghl-recon.md.
+docs/recon-samples/
+
+# Playwright MCP scratch
+.playwright-mcp/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# Loose captures that may end up at repo root during recon
+/ghl-*.json
+*.har
+
+# Logs
+*.log

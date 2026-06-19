@@ -1,0 +1,55 @@
+{
+  "description": "Real-world examples of action types (from captured workflows). Useful when the main catalog does not include a type (notably the truly internal primitives that are bundled in the SPA, not served by the assets endpoint).",
+  "examples": [
+    {
+      "type": "add_contact_tag",
+      "name": "Add Tag",
+      "attributes": {
+        "tags": [
+          "lead_froid"
+        ]
+      }
+    },
+    {
+      "type": "internal_notification",
+      "name": "Internal Notification",
+      "attributes": {
+        "type": "notification",
+        "notification": {
+          "type": "send_notification",
+          "body": "{{contact.first_name}} est rentré dans le pipeline en tant que nouveau lead",
+          "title": "{{contact.first_name}} est rentré dans le pipeline",
+          "redirectPage": "opportunity",
+          "userType": "all"
+        }
+      }
+    },
+    {
+      "type": "internal_create_opportunity",
+      "name": "Create Opportunity",
+      "attributes": {
+        "pipelineId": "NRiQHyhDkFtfXQcu3J72",
+        "type": "internal_create_opportunity",
+        "__customInputFields__": [
+          {
+            "__customInputs__": {
+              "value": "numerical"
+            },
+            "dataType": "SINGLE_OPTIONS",
+            "filterField": "pipelineStageId",
+            "value": "9868a080-9dee-4d0d-b734-8e765da94f82",
+            "valueFieldType": "select"
+          },
+          {
+            "__customInputs__": {},
+            "dataType": "NUMERICAL",
+            "filterField": "monetaryValue",
+            "value": 2900,
+            "valueFieldType": "numerical"
+          }
+        ],
+        "__customInputs__": {}
+      }
+    }
+  ]
+}
