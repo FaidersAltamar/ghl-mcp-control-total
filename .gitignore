@@ -21,8 +21,6 @@ api-client/probe-results.json
 api-client/probe-analysis-clean.txt
 api-client/all-endpoints.json
 
-# Cloned external repos
-faiders-deploy/
 
 # GHL workflow builder MCP server
 ghl-workflow-builder/mcp-server/.env
