@@ -1,0 +1,13 @@
+name = "ghl-webhook-worker"
+main = "src/index.ts"
+compatibility_date = "2024-06-20"
+
+# Variables de entorno (se sobreescriben con wrangler secret o en el dashboard)
+[vars]
+GHL_WEBHOOK_PATH = "/webhooks/ghl"
+GHL_WEBHOOK_MAX_STORED = "100"
+
+# Descomenta y configura si quieres persistir webhooks en KV
+# [[kv_namespaces]]
+# binding = "WEBHOOK_KV"
+# id = "tu-kv-namespace-id"

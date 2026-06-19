@@ -1,0 +1,17 @@
+{
+  "name": "ghl-webhook-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.5.2",
+    "wrangler": "^3.63.0"
+  }
+}

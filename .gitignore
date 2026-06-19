@@ -16,6 +16,9 @@ ghl-workflow-extractor/docs/recon-samples/
 .DS_Store
 **/.DS_Store
 
+# Editor / IDE configs
+.cursor/
+
 # Probe outputs with live data
 api-client/probe-results.json
 api-client/probe-analysis-clean.txt
