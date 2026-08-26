@@ -36,16 +36,28 @@ if (existsSync(mcpPath)) {
   }
 }
 
-if (merged.GHL_LOCATION_ID && !merged.GHL_DEFAULT_LOCATION_ID) {
-  merged.GHL_DEFAULT_LOCATION_ID = merged.GHL_LOCATION_ID;
-}
 if (merged.GHL_DEFAULT_LOCATION_ID && !merged.GHL_LOCATION_ID) {
   merged.GHL_LOCATION_ID = merged.GHL_DEFAULT_LOCATION_ID;
+}
+delete merged.GHL_DEFAULT_LOCATION_ID;
+delete merged.GHL_LOCATION;
+
+const PLACEHOLDER = /^(tu-|your_|change-me|xxx|placeholder|example)/i;
+
+function isRealValue(value) {
+  if (value == null) return false;
+  const v = String(value).trim();
+  if (!v) return false;
+  if (PLACEHOLDER.test(v)) return false;
+  return true;
+}
+
+for (const [key, value] of Object.entries(merged)) {
+  if (!isRealValue(value)) delete merged[key];
 }
 
 const order = [
   'GHL_LOCATION_ID',
-  'GHL_DEFAULT_LOCATION_ID',
   'GHL_COMPANY_ID',
   'GHL_PIT_TOKEN',
   'GHL_FIREBASE_REFRESH_TOKEN',
@@ -70,13 +82,13 @@ const lines = [
 
 const written = new Set();
 for (const key of order) {
-  if (merged[key]) {
+  if (isRealValue(merged[key])) {
     lines.push(`${key}=${merged[key]}`);
     written.add(key);
   }
 }
 for (const [key, value] of Object.entries(merged)) {
-  if (!written.has(key)) lines.push(`${key}=${value}`);
+  if (!written.has(key) && isRealValue(value)) lines.push(`${key}=${value}`);
 }
 
 writeFileSync(ENV_PATH, lines.join('\n') + '\n', 'utf8');

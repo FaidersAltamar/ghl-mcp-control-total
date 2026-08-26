@@ -48,6 +48,11 @@ const workflowTools = [
 
 loadEnv({ required: true });
 
+// Keep legacy alias in sync for any code that still reads GHL_DEFAULT_LOCATION_ID
+if (process.env.GHL_LOCATION_ID && !process.env.GHL_DEFAULT_LOCATION_ID) {
+  process.env.GHL_DEFAULT_LOCATION_ID = process.env.GHL_LOCATION_ID;
+}
+
 const BACKEND = 'https://backend.leadconnectorhq.com';
 const FIREBASE_API_KEY = 'AIzaSyB_w3vXmsI7WeQtrIOkjR6xTRVN5uOieiE';
 

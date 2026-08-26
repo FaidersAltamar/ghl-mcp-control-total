@@ -121,7 +121,6 @@ async function main() {
     // wipe a working credential when one of the sources came back empty.
     const values = {
       GHL_LOCATION_ID: process.env.GHL_LOCATION_ID || 'kNcygEmVTrhIueZQMDXM',
-      GHL_DEFAULT_LOCATION_ID: process.env.GHL_DEFAULT_LOCATION_ID || 'kNcygEmVTrhIueZQMDXM',
       GHL_FIREBASE_REFRESH_TOKEN: found.refreshToken || undefined,
       GHL_INTERNAL_JWT: found.bearerJwt || undefined
     };
