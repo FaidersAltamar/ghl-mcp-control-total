@@ -1,31 +1,36 @@
-.mcp.json
-.opencode/mcp.json
+# Secrets — single source of truth at project root
 .env
 .env.local
-*.env
+**/.env
+!**/.env.example
+!.env.example
+
+# Legacy env locations
+tools/api-client/.env
+mcp/workflows/.env
+
 node_modules/
 dist/
 
-# GHL workflow extractor live data / session tokens
-ghl-workflow-extractor/workflows-live.json
-ghl-workflow-extractor/*.token.json
-ghl-workflow-extractor/*.session.json
-ghl-workflow-extractor/docs/recon-samples/
+# Workflow extractor runtime data
+tools/workflow-extractor/workflows-live.json
+tools/workflow-extractor/*.token.json
+tools/workflow-extractor/*.session.json
+tools/workflow-extractor/docs/recon-samples/
 
 # macOS
 .DS_Store
 **/.DS_Store
 
-# Editor / IDE configs
+# Editor
 .cursor/
+.claude/
 
-# Probe outputs with live data
-api-client/probe-results.json
-api-client/probe-analysis-clean.txt
-api-client/all-endpoints.json
+# Probe outputs
+tools/api-client/probe-results.json
+tools/api-client/probe-analysis-clean.txt
+tools/api-client/all-endpoints.json
 
-
-# GHL workflow builder MCP server
-ghl-workflow-builder/mcp-server/.env
-ghl-workflow-builder/mcp-server/node_modules/
-ghl-workflow-builder/mcp-server/dist/
+# MCP server deps
+mcp/workflows/node_modules/
+mcp/workflows/dist/

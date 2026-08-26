@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ghl": {
+      "command": "node",
+      "args": ["scripts/mcp/public.mjs"]
+    },
+    "ghl-workflow-builder": {
+      "command": "node",
+      "args": ["scripts/mcp/workflows.mjs"]
+    }
+  }
+}

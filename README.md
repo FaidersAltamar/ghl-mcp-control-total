@@ -1,174 +1,80 @@
 # GHL MCP Control Total
 
-Integración completa de OpenCode / Claude Code con GoHighLevel (GHL) para tener control total sobre la location `Control Ads` (`kNcygEmVTrhIueZQMDXM`).
-
-Combina:
-- **MCP server público** de GHL para contactos, ventas, calendarios, etc.
-- **MCP server propio** para crear, editar y publicar workflows/automatizaciones.
-- **API directa** como fallback.
-- **Extensión de Chrome** para extraer workflows desde la UI de GHL.
-
----
-
-## 🚀 Qué puedes hacer
-
-Desde el chat de OpenCode o Claude Code puedes pedir:
-
-> *"Crea un workflow de Instagram que responda 'hola como estás' cuando alguien escriba MCP"*
-
-> *"Muéstrame todas mis automatizaciones activas"*
-
-> *"Cuánto he vendido este mes y qué productos se vendieron"*
-
-> *"Lista mis contactos que compraron el curso SUDO"*
-
-> *"Publica el workflow de Instagram - Dropi"*
-
----
-
-## 📁 Estructura
+Conecta **Cursor** con [GoHighLevel](https://www.gohighlevel.com): contactos, ventas, calendarios, pagos y **workflows completos** desde el chat.
 
 ```
-.
-├── CLAUDE.md                       # Guía completa para el agente
-├── README.md                       # Este archivo
-├── .mcp.json                       # Config local de MCP (no se sube a Git)
-├── .opencode/mcp.json              # Config de OpenCode (no se sube a Git)
-│
-├── api-client/                     # Scripts de fallback con el SDK oficial
-│   ├── ghl-client.js               # Wrapper genérico del SDK
-│   ├── webhook-server.js           # Receptor local de webhooks (pruebas)
-│   ├── oauth-helper.js             # Helper OAuth
-│   ├── exchange-oauth-code.mjs     # Intercambiar auth code por tokens
-│   ├── refresh-oauth-token.mjs     # Refrescar access token
-│   └── ...
-│
-├── webhook-worker/                 # Receptor de producción en Cloudflare Workers
-│   ├── src/index.ts                # Worker que verifica firmas y recibe webhooks
-│   ├── wrangler.toml
-│   └── .env.example
-│
-├── ghl-workflow-builder/           # Control total de workflows
-│   ├── mcp-server/
-│   │   ├── server.js               # MCP server de workflows
-│   │   ├── package.json
-│   │   └── .env.example            # Ejemplo de variables
-│   ├── docs/                       # Documentación de la API interna
-│   ├── schemas/                    # Schemas de triggers y acciones
-│   └── scripts/
-│
-└── ghl-workflow-extractor/         # Extensión Chrome para extraer workflows
-    ├── manifest.json
-    ├── content-opencode.js
-    ├── console-extractor-v2.js
-    ├── server.js
-    └── README-OPENCODE.md
+Cursor  →  .mcp.json  →  scripts/mcp/  →  .env  →  GoHighLevel
 ```
 
 ---
 
-## ⚙️ Configuración rápida
-
-### 1. Clonar e instalar
+## Inicio rápido
 
 ```bash
 git clone https://github.com/FaidersAltamar/ghl-mcp-control-total.git
 cd ghl-mcp-control-total
 
-# Instalar dependencias del workflow builder MCP
-cd ghl-workflow-builder/mcp-server
-npm install
+copy .env.example .env          # completar credenciales
+npm install --prefix mcp/workflows
+
+node scripts/verify-connection.mjs
 ```
 
-### 2. Configurar credenciales
+Reinicia Cursor — `.mcp.json` ya apunta a los servidores MCP.
 
-Crear `ghl-workflow-builder/mcp-server/.env`:
+---
 
-```env
-GHL_FIREBASE_REFRESH_TOKEN=tu_refresh_token_de_firebase
-GHL_DEFAULT_LOCATION_ID=kNcygEmVTrhIueZQMDXM
+## Estructura
+
+| Carpeta | Qué es |
+|---|---|
+| [`docs/`](docs/) | Documentación |
+| [`lib/`](lib/) | Código compartido (env, auth) |
+| [`scripts/`](scripts/) | Scripts ejecutables |
+| [`mcp/workflows/`](mcp/workflows/) | Servidor MCP de workflows |
+| [`reference/workflows/`](reference/workflows/) | Docs técnicos API interna |
+| [`tools/`](tools/) | API fallback, auth-bridge, extractor, webhooks |
+
+Mapa completo → [`docs/STRUCTURE.md`](docs/STRUCTURE.md)
+
+---
+
+## Comandos útiles
+
+```bash
+node scripts/verify-connection.mjs   # prueba API + workflows
+node scripts/workflows/list.mjs      # listar automatizaciones
+node scripts/workflows/summarize.mjs # detalle triggers/pasos
 ```
 
-> El refresh token se extrae de GHL: DevTools → Application → IndexedDB → `firebaseLocalStorageDb`.
+---
 
-Crear `.mcp.json` en la raíz:
+## MCP Tools
 
-```json
-{
-  "mcpServers": {
-    "ghl": {
-      "command": "npx",
-      "args": ["-y", "@nerdsnipe-inc/ghl-mcp-server"],
-      "env": {
-        "GHL_PIT_TOKEN": "tu_pit_token",
-        "GHL_LOCATION": "kNcygEmVTrhIueZQMDXM"
-      }
-    },
-    "ghl-workflow-builder": {
-      "command": "node",
-      "args": ["ghl-workflow-builder/mcp-server/server.js"],
-      "env": {
-        "GHL_FIREBASE_REFRESH_TOKEN": "tu_refresh_token_de_firebase",
-        "GHL_DEFAULT_LOCATION_ID": "kNcygEmVTrhIueZQMDXM"
-      }
-    }
-  }
-}
-```
+**API pública (`ghl`)** — 127 tools: contactos, ventas, calendarios, pagos…
 
-### 3. Reiniciar OpenCode / Claude Code
-
-Para que cargue los nuevos MCP servers.
+**Workflows (`ghl-workflow-builder`)** — `ghl_list_workflows`, `ghl_create_workflow`, `ghl_add_trigger`, `ghl_add_action`, `ghl_publish_workflow`, `ghl_delete_workflow`
 
 ---
 
-## 🛠️ Tools disponibles
+## Credenciales
 
-### MCP público de GHL (`ghl_*`)
-127 tools para contactos, conversaciones, calendarios, oportunidades, pagos, etc.
+Un solo archivo: **`.env`** en la raíz. Plantilla: `.env.example`. Nunca subir `.env` a GitHub.
 
-### MCP propio de workflows (`ghl_*` en `ghl-workflow-builder`)
-- `ghl_list_workflows`
-- `ghl_get_workflow`
-- `ghl_create_workflow`
-- `ghl_add_trigger`
-- `ghl_add_action`
-- `ghl_publish_workflow`
-- `ghl_delete_workflow`
+| Variable | Para qué |
+|---|---|
+| `GHL_PIT_TOKEN` | API pública |
+| `GHL_FIREBASE_REFRESH_TOKEN` | Workflows |
+| `GHL_LOCATION_ID` | Sub-cuenta GHL |
 
 ---
 
-## 🔒 Seguridad
+## Documentación
 
-- **Nunca subas tokens a GitHub.** Los archivos con credenciales están en `.gitignore`.
-- El refresh token de Firebase expira la sesión si la contraseña cambia.
-- El PIT token solo funciona para la location configurada.
-
----
-
-## ⚠️ Limitaciones conocidas
-
-| Funcionalidad | Estado | Nota |
-|---|---|---|
-| Workflows | ✅ Control total | Crear, editar, publicar, borrar |
-| Contactos | ✅ Completo | Via MCP público |
-| Ventas / oportunidades | ✅ Completo | Via MCP público + API directa |
-| Calendarios / citas | ✅ Completo | Via MCP público |
-| Subida de archivos | ✅ Funciona | `POST /medias/upload-file` con multipart/form-data |
-| Cursos / memberships | ❌ No disponible | GHL no expone API pública |
-| Webhooks en tiempo real | ✅ Listo para deploy | Cloudflare Worker en `webhook-worker/`. Requiere Marketplace OAuth app |
-| Nivel agencia / multi-location | ❌ No disponible | Requiere token de agencia |
+- [Setup máquina nueva](docs/setup.md)
+- [Guía agente IA](docs/agent-guide.md)
+- [Manual conexión GHL](docs/manual-conexion.md)
 
 ---
 
-## 📚 Documentación adicional
-
-- `CLAUDE.md` — guía completa para el agente
-- `ghl-workflow-builder/docs/` — API interna de workflows
-- `ghl-workflow-extractor/README-OPENCODE.md` — cómo usar la extensión Chrome
-
----
-
-## 🧑‍💻 Autor
-
-Faiders Altamar — Control Ads
+**Faiders Altamar** — Control Ads
