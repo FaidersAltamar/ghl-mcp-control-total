@@ -31,6 +31,9 @@ tools/api-client/probe-results.json
 tools/api-client/probe-analysis-clean.txt
 tools/api-client/all-endpoints.json
 
+# Runtime / sweep state
+.tmp/
+
 # MCP server deps
 mcp/workflows/node_modules/
 mcp/workflows/dist/
