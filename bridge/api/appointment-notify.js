@@ -75,19 +75,41 @@ export default async function handler(req, res) {
   }
 
   const b = req.body || {};
+  const q = req.query || {};
+  const cd = b.customData || b.custom_data || {};
   const notifySecret = process.env.APPOINTMENT_NOTIFY_SECRET || '';
   const adminKey = req.headers['x-admin-key'] || '';
-  const bodySecret = b.secret || '';
+  const givenSecret = b.secret || cd.secret || q.secret || '';
 
   // Solo el secreto dedicado. Si no está configurado, la función queda bloqueada.
-  if (!notifySecret || (bodySecret !== notifySecret && adminKey !== notifySecret)) {
+  if (!notifySecret || (givenSecret !== notifySecret && adminKey !== notifySecret)) {
+    console.warn('appointment-notify 401 keys=', Object.keys(b).join(','));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const {
-    calendar_id, kind, name, email, phone, when, location,
-    meeting_link, zoom_link, google_meet_link, title, notes,
-  } = b;
+  // La acción "Webhook" estándar de GHL ignora el body personalizado y envía su propio
+  // payload (contacto en la raíz + objeto `calendar`), así que se aceptan ambos formatos.
+  // Las variables sin resolver ("{{...}}") se tratan como vacías.
+  const val = (...xs) => {
+    for (const x of xs) {
+      const s = (x ?? '').toString().trim();
+      if (s && !/^\{\{.*\}\}$/.test(s)) return s;
+    }
+    return '';
+  };
+  const cal = b.calendar || {};
+  const calendar_id = val(b.calendar_id, cd.calendar_id, q.cal, cal.id, cal.calendarId);
+  const kind = val(b.kind, cd.kind, q.kind) || 'booked';
+  const name = val(b.name, b.full_name, [b.first_name, b.last_name].filter(Boolean).join(' '), b.contact_name);
+  const email = val(b.email);
+  const phone = val(b.phone);
+  const when = val(b.when, cal.startTime, cal.start_time);
+  const location = val(b.location, cal.address, cal.location);
+  const meeting_link = val(b.meeting_link, cal.meetingLocation, cal.meeting_location);
+  const zoom_link = val(b.zoom_link);
+  const google_meet_link = val(b.google_meet_link);
+  const title = val(b.title, cal.title);
+  const notes = val(b.notes, cal.notes);
 
   let teamKey = null;
   if (CAL_TIKTOK.has(calendar_id)) teamKey = 'tiktok';
