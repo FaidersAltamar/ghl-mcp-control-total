@@ -34,6 +34,10 @@ tools/api-client/all-endpoints.json
 # Runtime / sweep state
 .tmp/
 
+# Datos exportados (contactos, teléfonos, correos): nunca al repo público
+reports/
+scripts/mcp/.web-mcp-request.json
+
 # MCP server deps
 mcp/workflows/node_modules/
 mcp/workflows/dist/

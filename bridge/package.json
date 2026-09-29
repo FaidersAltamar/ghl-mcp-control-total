@@ -1,0 +1,8 @@
+{
+  "name": "ghl-whatsapp-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Puente WhatsApp (WasenderApi) <-> GHL. Webhooks entrantes y envío saliente.",
+  "engines": { "node": ">=20" }
+}

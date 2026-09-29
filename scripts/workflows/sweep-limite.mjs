@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Auto-reply Instagram story/DM keyword "gluglu" (variaciones).
+ * Auto-reply Instagram story/DM keyword "limite" (variaciones).
  * El workflow GHL falla de forma intermitente en respuestas a historia;
- * este sweeper cubre los huecos por API directa.
+ * este sweeper cubre los huecos por API directa (PIT).
  *
  * Uso:
- *   node scripts/workflows/sweep-gluglu.mjs              # una pasada
- *   node scripts/workflows/sweep-gluglu.mjs --watch      # continuo (sin límite)
- *   node scripts/workflows/sweep-gluglu.mjs --watch --minutes=120
+ *   node scripts/workflows/sweep-limite.mjs              # una pasada
+ *   node scripts/workflows/sweep-limite.mjs --watch      # continuo (sin límite)
+ *   node scripts/workflows/sweep-limite.mjs --watch --minutes=120
  */
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
@@ -18,32 +18,29 @@ loadEnv({ required: true });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const STATE_DIR = join(__dirname, '../../.tmp');
-const STATE_FILE = join(STATE_DIR, 'gluglu-sweep-state.json');
+const STATE_FILE = join(STATE_DIR, 'limite-sweep-state.json');
 
 const TOKEN = getPitToken();
 const LID = getLocationId();
 const BASE = process.env.GHL_API_BASE || 'https://services.leadconnectorhq.com';
 const VERSION = process.env.GHL_API_VERSION || '2021-07-28';
-const LINK = 'https://scalbook.com/u/mjt287';
+const LINK = 'https://www.skool.com/rush/aumenta-tu-limite-diario-con-meta-ai-sin-complicaciones';
 
 const WATCH = process.argv.includes('--watch');
 const minutesArg = process.argv.find((a) => a.startsWith('--minutes='));
 const WATCH_MS = minutesArg
   ? Math.max(1, Number(minutesArg.split('=')[1]) || 0) * 60 * 1000
   : 0; // 0 = forever
-const INTERVAL_MS = Number(process.env.GLUGLU_SWEEP_INTERVAL_MS || 60000);
+const INTERVAL_MS = Number(process.env.LIMITE_SWEEP_INTERVAL_MS || 60000);
 
-const DM_TEXT = `🔥 Miren esta oferta
+const DM_TEXT = `🔥 Aquí tienes el post que te prometí.
 
-Aunque el caso es de gambling y no de e-commerce, vale muchísimo la pena analizarlo.
+Te muestro cómo funciona el proceso para aumentar el límite diario de Meta y qué debes hacer para solicitarlo correctamente.
 
-Desde el otro lado del mundo están creando ofertas cada vez más completas y creativas para conseguir resultados enormes.
+👇 Léelo completo aquí:
+VER EL POST →
 
-👉 Nosotros en e-commerce tenemos que empezar a pensar igual: no se trata solamente de encontrar un producto, sino de construir una oferta irresistible alrededor de él.
-
-Les dejo el caso para que lo lean y saquemos ideas:
-
-LEER EL CASO COMPLETO → ${LINK}`;
+${LINK}`;
 
 const h = {
   Authorization: `Bearer ${TOKEN}`,
@@ -80,7 +77,8 @@ function matchesKeyword(text = '') {
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  return /\bglu\s*glu+\b/.test(n) || n.includes('gluglu');
+  // limite / límite / limiite / limitee etc.
+  return /\blimi+te+\b/.test(n) || n.includes('limite');
 }
 
 async function pit(path, init = {}) {
@@ -114,6 +112,7 @@ async function sweepOnce(state) {
 
   for (const c of convos) {
     // Cheap pre-filter: skip conversations whose last inbound isn't a keyword match.
+    // Avoids a messages GET for every conversation (the main rate-limit drain).
     const lastBody = c.lastMessageBody || c.lastMessage?.body || c.lastMessage || '';
     if (lastBody && !matchesKeyword(lastBody)) continue;
 
@@ -130,7 +129,7 @@ async function sweepOnce(state) {
     const alreadyOutbound = msgs.some(
       (m) =>
         m.direction === 'outbound' &&
-        (m.body || '').includes('Miren esta oferta') &&
+        (m.body || '').includes('Aquí tienes el post') &&
         new Date(m.dateAdded) >= new Date(lastKw.dateAdded)
     );
 
@@ -164,7 +163,7 @@ const started = Date.now();
 let pass = 0;
 
 console.log(
-  `[gluglu-sweep] mode=${WATCH ? 'watch' : 'once'} interval=${INTERVAL_MS}ms limit=${
+  `[limite-sweep] mode=${WATCH ? 'watch' : 'once'} interval=${INTERVAL_MS}ms limit=${
     WATCH_MS ? WATCH_MS / 60000 + 'min' : 'forever'
   }`
 );
@@ -184,7 +183,7 @@ do {
 
   if (!WATCH) break;
   if (WATCH_MS && Date.now() - started >= WATCH_MS) {
-    console.log('[gluglu-sweep] time limit reached — stopping');
+    console.log('[limite-sweep] time limit reached — stopping');
     break;
   }
   await new Promise((r) => setTimeout(r, INTERVAL_MS));
