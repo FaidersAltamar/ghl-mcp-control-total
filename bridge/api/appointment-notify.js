@@ -281,12 +281,15 @@ export default async function handler(req, res) {
   let client = 'sin-telefono';
   if (phone && !usedFallback) {
     const firstName = clean(b.first_name) || clean(name).split(' ')[0] || '';
-    const clientWhen = fmtWhen(when, clientTz);
+    const localWhen = fmtWhen(when, clientTz);
+    const clientWhen = !whenFmt ? '—' : clientTz !== 'America/Bogota' && localWhen !== whenFmt
+      ? `${whenFmt} (hora Colombia) · ${localWhen.split(', ').pop()} en tu zona (${clientTz})`
+      : `${whenFmt} (hora Colombia)`;
     const clientText = kind === 'reminder'
       ? [
         `⏰ Hola${firstName ? ` ${firstName}` : ''}, te recordamos tu llamada con el equipo de *${calName}*.`,
         '',
-        `📅 ${clientWhen || '—'}${clientTz !== 'America/Bogota' ? ` (hora de ${clientTz})` : ''}`,
+        `📅 ${clientWhen}`,
         link ? `🔗 Enlace para conectarte: ${link}` : '',
         '',
         'Te recomendamos conectarte 5 minutos antes. ¡Nos vemos! 🙌',
@@ -294,7 +297,7 @@ export default async function handler(req, res) {
       : [
         `✅ Hola${firstName ? ` ${firstName}` : ''}, tu llamada con el equipo de *${calName}* quedó agendada.`,
         '',
-        `📅 ${clientWhen || '—'}${clientTz !== 'America/Bogota' ? ` (hora de ${clientTz})` : ''}`,
+        `📅 ${clientWhen}`,
         link ? `🔗 Enlace para conectarte: ${link}` : 'El enlace de la llamada te llegará por este medio antes de la reunión.',
         '',
         'Si necesitas reprogramar, responde a este mensaje. ¡Te esperamos! 🙌',
