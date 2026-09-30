@@ -208,9 +208,11 @@ export default async function handler(req, res) {
   if (appt?.startTime && /[zZ]|[+-]\d\d:?\d\d$/.test(appt.startTime)) when = appt.startTime;
   const realCalendarId = appt?.calendarId || calendar_id;
   if (CAL_LABEL[realCalendarId]) calName = CAL_LABEL[realCalendarId];
-  if (!link) link = fixedMeetingLink(realCalendarId);
+  // Citas creadas a mano como "Llamada por WhatsApp": sin enlace de video.
+  const whatsappCall = /whatsapp/i.test(appt?.address || location || '');
+  if (!link && !whatsappCall) link = fixedMeetingLink(realCalendarId);
   // Sin Google Meet: sala propia por cita, guardada en GHL para recordatorios, correos y agenda.
-  if (!link && appt?.id && kind !== 'reminder') {
+  if (!link && !whatsappCall && appt?.id && kind !== 'reminder') {
     // meet.jit.si exige que un moderador inicie sesión; esta instancia abre la sala sin cuenta.
     const base = process.env.MEETING_BASE_URL || 'https://meet.ffmuc.net';
     link = `${base}/ControlAds-${calName.replace(/\s+/g, '')}-${appt.id}`;
@@ -239,7 +241,7 @@ export default async function handler(req, res) {
       phone ? `📱 Contacto: ${clean(phone)}` : '',
       `📅 Fecha y hora: ${whenFmt || '—'}`,
       location && !isUrl(location) ? `📍 Ubicación: ${clean(location)}` : '',
-      link ? `🔗 Enlace: ${link}` : '⚠️ Sin enlace de reunión: envíaselo al cliente por WhatsApp.',
+      link ? `🔗 Enlace: ${link}` : whatsappCall ? '📞 Llamada por WhatsApp al número del cliente.' : '⚠️ Sin enlace de reunión: envíaselo al cliente por WhatsApp.',
       '',
       'Recuerda revisar los detalles de la llamada. ¡Éxitos! 💪',
     ].filter(Boolean).join('\n');
@@ -252,7 +254,7 @@ export default async function handler(req, res) {
       phone ? `📱 Contacto: ${clean(phone)}` : '',
       `📅 Fecha y hora: ${whenFmt || '—'}`,
       location && !isUrl(location) ? `📍 Ubicación: ${clean(location)}` : '',
-      link ? `🔗 Enlace: ${link}` : '⚠️ Sin enlace de reunión: envíaselo al cliente por WhatsApp.',
+      link ? `🔗 Enlace: ${link}` : whatsappCall ? '📞 Llamada por WhatsApp al número del cliente.' : '⚠️ Sin enlace de reunión: envíaselo al cliente por WhatsApp.',
       notes ? `📝 Notas: ${clean(notes)}` : '',
     ].filter(Boolean).join('\n');
   }
@@ -268,9 +270,12 @@ export default async function handler(req, res) {
     html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5">${toHtml(text)}</div>`,
     fromName: `Citas ${calName}`,
   }));
-  if (email && link) {
+  if (email && (link || whatsappCall)) {
     const first = clean(b.first_name) || clean(name).split(' ')[0] || '';
-    const btn = `<a href="${esc(link)}" style="display:inline-block;background:#d60000;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Unirme a la llamada</a>`;
+    const btn = link ? `<a href="${esc(link)}" style="display:inline-block;background:#d60000;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Unirme a la llamada</a>` : '';
+    const how = link
+      ? `<p><strong>🔗 Enlace de la reunión:</strong><br><a href="${esc(link)}">${esc(link)}</a></p><p>${btn}</p>`
+      : '<p><strong>📞 Te llamaremos por WhatsApp</strong> al número que registraste.</p>';
     emailJobs.push(sendEmailWithRetry({
       to: email,
       subject: kind === 'reminder'
@@ -280,9 +285,8 @@ export default async function handler(req, res) {
 <p>Hola${first ? ` ${esc(first)}` : ''},</p>
 <p>${kind === 'reminder' ? 'Te recordamos tu llamada' : 'Tu llamada quedó agendada'} con el equipo de <strong>${esc(calName)}</strong>.</p>
 <p><strong>📅 Fecha y hora:</strong> ${esc(whenFmt)} (hora Colombia)</p>
-<p><strong>🔗 Enlace de la reunión:</strong><br><a href="${esc(link)}">${esc(link)}</a></p>
-<p>${btn}</p>
-<p>Te recomendamos conectarte 5 minutos antes. Si necesitas reprogramar, responde a este correo.</p>
+${how}
+<p>Te recomendamos estar disponible 5 minutos antes. Si necesitas reprogramar, responde a este correo.</p>
 </div>`,
       fromName: `Citas ${calName}`,
     }));
@@ -355,7 +359,7 @@ export default async function handler(req, res) {
         `⏰ Hola${firstName ? ` ${firstName}` : ''}, te recordamos tu llamada con el equipo de *${calName}*.`,
         '',
         `📅 ${clientWhen}`,
-        link ? `🔗 Enlace para conectarte: ${link}` : '',
+        link ? `🔗 Enlace para conectarte: ${link}` : whatsappCall ? '📞 Te llamaremos por WhatsApp a este número.' : '',
         '',
         'Te recomendamos conectarte 5 minutos antes. ¡Nos vemos! 🙌',
       ]
@@ -363,7 +367,7 @@ export default async function handler(req, res) {
         `✅ Hola${firstName ? ` ${firstName}` : ''}, tu llamada con el equipo de *${calName}* quedó agendada.`,
         '',
         `📅 ${clientWhen}`,
-        link ? `🔗 Enlace para conectarte: ${link}` : 'El enlace de la llamada te llegará por este medio antes de la reunión.',
+        link ? `🔗 Enlace para conectarte: ${link}` : whatsappCall ? '📞 Te llamaremos por WhatsApp a este número.' : 'El enlace de la llamada te llegará por este medio antes de la reunión.',
         '',
         'Si necesitas reprogramar, responde a este mensaje. ¡Te esperamos! 🙌',
       ];
