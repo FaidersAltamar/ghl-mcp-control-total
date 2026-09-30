@@ -23,7 +23,7 @@ if (process.argv[2] === '--cancel') {
   process.exit(0);
 }
 
-const [calendarId, phone] = process.argv.slice(2);
+const [calendarId, phone, assignedUser] = process.argv.slice(2);
 const s = await call('/contacts/search', { method: 'POST', body: JSON.stringify({ locationId: LID, pageLimit: 1, filters: [{ field: 'phone', operator: 'eq', value: phone }] }) });
 const contact = s.body.contacts?.[0];
 if (!contact) throw new Error('Contacto no encontrado');
@@ -33,7 +33,7 @@ const cal = (await call(`/calendars/${calendarId}`)).body.calendar;
 const start = Date.now() + 2 * 86400000;
 const slots = (await call(`/calendars/${calendarId}/free-slots?startDate=${start}&endDate=${start + 5 * 86400000}&timezone=America/Bogota`)).body;
 const day = Object.keys(slots).find((k) => slots[k]?.slots?.length);
-const slot = slots[day].slots[0];
+const slot = slots[day].slots[Number(process.env.SLOT_INDEX || 0)] || slots[day].slots.at(-1);
 console.log('slot', slot);
 
 const r = await call('/calendars/events/appointments', {
@@ -41,8 +41,9 @@ const r = await call('/calendars/events/appointments', {
   body: JSON.stringify({
     calendarId, locationId: LID, contactId: contact.id, startTime: slot,
     title: 'PRUEBA — ignorar (verificando enlace)', appointmentStatus: 'confirmed',
-    assignedUserId: cal.teamMembers[0].userId,
+    assignedUserId: assignedUser || cal.teamMembers[0].userId,
     meetingLocationType: 'gmeet', meetingLocationId: 'google_conference_0', overrideLocationConfig: true,
+    ignoreFreeSlotValidation: true,
   }),
 });
 console.log('create', r.status, JSON.stringify(r.body).slice(0, 400));

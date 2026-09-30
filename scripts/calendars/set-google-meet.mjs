@@ -18,9 +18,11 @@ for (const id of CALS) {
     userId: m.userId,
     priority: m.priority,
     isPrimary: m.isPrimary,
-    locationConfigurations: [{ kind: 'google_conference', location: '', position: 0 }],
+    selected: true,
+    isZoomAdded: 'meet',
+    locationConfigurations: [{ kind: 'google_conference', location: '', position: 0, meetingId: 'google_conference_0' }],
   }));
   const r = await fetch(`${BASE}/calendars/${id}`, { method: 'PUT', headers: h, body: JSON.stringify({ teamMembers }) });
   const after = (await r.json()).calendar;
-  console.log(`${c.name}: HTTP ${r.status} ->`, JSON.stringify((after?.teamMembers || []).map((m) => m.locationConfigurations?.[0]?.kind)));
+  console.log(`${c.name}: HTTP ${r.status} ->`, JSON.stringify((after?.teamMembers || []).map((m) => `${m.locationConfigurations?.[0]?.kind}/${m.isZoomAdded}`)));
 }
