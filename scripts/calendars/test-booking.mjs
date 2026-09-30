@@ -41,7 +41,8 @@ const r = await call('/calendars/events/appointments', {
   body: JSON.stringify({
     calendarId, locationId: LID, contactId: contact.id, startTime: slot,
     title: 'PRUEBA — ignorar (verificando enlace)', appointmentStatus: 'confirmed',
-    assignedUserId: cal.teamMembers[0].userId, meetingLocationType: 'gmeet',
+    assignedUserId: cal.teamMembers[0].userId,
+    meetingLocationType: 'gmeet', meetingLocationId: 'google_conference_0', overrideLocationConfig: true,
   }),
 });
 console.log('create', r.status, JSON.stringify(r.body).slice(0, 400));

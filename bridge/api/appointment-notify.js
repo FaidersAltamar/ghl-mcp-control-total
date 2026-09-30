@@ -41,6 +41,13 @@ const CAL_META = new Set([
   'JGiNpYTCf6w3BwpAdChw', // Contingencias facebook
 ]);
 
+const CAL_LABEL = {
+  bJT5h32OkoOdSfV2zd4O: 'Meta Ads',
+  JGiNpYTCf6w3BwpAdChw: 'Contingencias Facebook',
+  o6c2SOIoEkjEfKtBPUNN: 'TikTok Ads',
+  '2vVaqq8c1uZ2xSpXW6Cr': 'Contingencias TikTok',
+};
+
 function phones(envKey, fallback) {
   return (process.env[envKey] || fallback)
     .split(',')
@@ -169,7 +176,7 @@ export default async function handler(req, res) {
 
   const fromPhone = process.env.NOTIFY_FROM_PHONE || '+17863728411';
   const clientTz = val(cal.selectedTimezone, cal.selected_timezone, b.timezone) || 'America/Bogota';
-  const calName = teamKey === 'tiktok' ? 'TikTok Ads' : 'Meta Ads';
+  let calName = teamKey === 'tiktok' ? 'TikTok Ads' : 'Meta Ads';
   console.log('appointment-notify calendar=', JSON.stringify(cal).slice(0, 600));
 
   // Enlace de la reunión: payload > cita en GHL (Meet/Zoom generado) > enlace fijo del calendario.
@@ -189,8 +196,9 @@ export default async function handler(req, res) {
         appt = await getAppointment(appointmentId);
       } else {
         const whenMs = parseWhen(when)?.getTime() ?? Date.now();
+        const teamCals = teamKey === 'tiktok' ? CAL_TIKTOK : CAL_META;
         const appts = (await getContactAppointments(contactId))
-          .filter((a) => !calendar_id || a.calendarId === calendar_id)
+          .filter((a) => teamCals.has(a.calendarId))
           .sort((x, y) => Math.abs(Date.parse(x.startTime) - whenMs) - Math.abs(Date.parse(y.startTime) - whenMs));
         appt = appts[0] || null;
       }
@@ -198,8 +206,19 @@ export default async function handler(req, res) {
     } catch (e) { /* no fatal */ }
   }
   if (appt?.startTime && /[zZ]|[+-]\d\d:?\d\d$/.test(appt.startTime)) when = appt.startTime;
-  if (!link) link = fixedMeetingLink(calendar_id);
+  const realCalendarId = appt?.calendarId || calendar_id;
+  if (CAL_LABEL[realCalendarId]) calName = CAL_LABEL[realCalendarId];
+  if (!link) link = fixedMeetingLink(realCalendarId);
   const whenFmt = fmtWhen(when);
+
+  // El paso "24 h antes" se ejecuta de inmediato si se agendó con menos de 24 h: se omite ese duplicado.
+  if (kind === 'reminder' && appt) {
+    const status = (appt.appointmentStatus || '').toLowerCase();
+    const ageMin = (Date.now() - Date.parse(appt.dateAdded || 0)) / 60000;
+    if (['cancelled', 'noshow', 'invalid'].includes(status) || ageMin < 20) {
+      return res.status(200).json({ ok: true, skipped: status === 'confirmed' || !status ? 'recien-agendada' : `estado-${status}` });
+    }
+  }
 
   const clean = (s) => (s || '').toString().trim();
 
