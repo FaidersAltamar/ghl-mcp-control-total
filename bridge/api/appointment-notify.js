@@ -27,7 +27,7 @@
 // }
 
 import { sendText, pickConnectedSession } from '../lib/wasender.js';
-import { sendTrackedEmail } from '../lib/ghl.js';
+import { sendTrackedEmail, getAppointment, getContactAppointments } from '../lib/ghl.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -78,15 +78,25 @@ function isUrl(s) {
   return typeof s === 'string' && /^https?:\/\//i.test(s.trim());
 }
 
-function fmtWhen(iso) {
+// Vercel corre en UTC: la zona horaria debe ir explícita.
+function fmtWhen(iso, timeZone = 'America/Bogota') {
   if (!iso) return '';
   try {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return iso;
-    return d.toLocaleString('es-CO', { dateStyle: 'full', timeStyle: 'short' });
+    return d.toLocaleString('es-CO', { dateStyle: 'full', timeStyle: 'short', timeZone });
   } catch {
-    return iso;
+    return fmtWhen(iso);
   }
+}
+
+// MEETING_LINKS="calendarId=https://...,calendarId2=https://..." — enlace fijo por calendario.
+function fixedMeetingLink(calendarId) {
+  for (const pair of (process.env.MEETING_LINKS || '').split(',')) {
+    const i = pair.indexOf('=');
+    if (i > 0 && pair.slice(0, i).trim() === calendarId) return pair.slice(i + 1).trim();
+  }
+  return '';
 }
 
 export default async function handler(req, res) {
@@ -144,12 +154,33 @@ export default async function handler(req, res) {
 
   const fromPhone = process.env.NOTIFY_FROM_PHONE || '+17863728411';
   const whenFmt = fmtWhen(when);
+  const clientTz = val(cal.selectedTimezone, cal.selected_timezone, b.timezone) || 'America/Bogota';
   const calName = teamKey === 'tiktok' ? 'TikTok Ads' : 'Meta Ads';
+  console.log('appointment-notify calendar keys=', Object.keys(cal).join(','));
 
-  // Enlace de la reunión: preferir zoom > meet > genérico > location si es URL.
-  const link = [zoom_link, google_meet_link, meeting_link, location]
+  // Enlace de la reunión: payload > cita en GHL (Meet/Zoom generado) > enlace fijo del calendario.
+  let link = [zoom_link, google_meet_link, meeting_link, location]
     .map((s) => (s || '').toString().trim())
     .find(isUrl) || '';
+  // Google Meet se genera unos segundos después de agendar: se reintenta la consulta.
+  const appointmentId = val(cal.appointmentId, cal.appointment_id, b.appointment_id);
+  const contactId = val(b.contact_id, b.contactId, cd.contact_id);
+  const linkOf = (a) => [a?.address, a?.meetingLocation, a?.hangoutLink].find(isUrl) || '';
+  for (let attempt = 0; !link && (appointmentId || contactId) && attempt < 4; attempt++) {
+    if (attempt) await sleep(3000);
+    try {
+      if (appointmentId) {
+        link = linkOf(await getAppointment(appointmentId));
+      } else {
+        const whenMs = Date.parse(when);
+        const appts = (await getContactAppointments(contactId))
+          .filter((a) => !calendar_id || a.calendarId === calendar_id)
+          .sort((x, y) => Math.abs(Date.parse(x.startTime) - whenMs) - Math.abs(Date.parse(y.startTime) - whenMs));
+        link = linkOf(appts[0]);
+      }
+    } catch (e) { /* no fatal */ }
+  }
+  if (!link) link = fixedMeetingLink(calendar_id);
 
   const clean = (s) => (s || '').toString().trim();
 
@@ -163,7 +194,7 @@ export default async function handler(req, res) {
       phone ? `📱 Contacto: ${clean(phone)}` : '',
       `📅 Fecha y hora: ${whenFmt || '—'}`,
       location && !isUrl(location) ? `📍 Ubicación: ${clean(location)}` : '',
-      link ? `🔗 Enlace: ${link}` : '',
+      link ? `🔗 Enlace: ${link}` : '⚠️ Sin enlace de reunión: envíaselo al cliente por WhatsApp.',
       '',
       'Recuerda revisar los detalles de la llamada. ¡Éxitos! 💪',
     ].filter(Boolean).join('\n');
@@ -176,7 +207,7 @@ export default async function handler(req, res) {
       phone ? `📱 Contacto: ${clean(phone)}` : '',
       `📅 Fecha y hora: ${whenFmt || '—'}`,
       location && !isUrl(location) ? `📍 Ubicación: ${clean(location)}` : '',
-      link ? `🔗 Enlace: ${link}` : '',
+      link ? `🔗 Enlace: ${link}` : '⚠️ Sin enlace de reunión: envíaselo al cliente por WhatsApp.',
       notes ? `📝 Notas: ${clean(notes)}` : '',
     ].filter(Boolean).join('\n');
   }
@@ -230,22 +261,55 @@ export default async function handler(req, res) {
     await sleep(5500);
   }
 
-  let ok = 0;
-  let failed = 0;
-  for (const to of team) {
+  const sendWithRetry = async (to, body) => {
     try {
-      await sendText(to, text, apiKey);
-      ok += 1;
+      await sendText(to, body, apiKey);
+      return true;
     } catch (e) {
       await sleep(5500);
       try {
-        await sendText(to, text, apiKey);
-        ok += 1;
+        await sendText(to, body, apiKey);
+        return true;
       } catch (e2) {
         console.error('appointment-notify whatsapp falló:', maskPhone(to), e2.message);
-        failed += 1;
+        return false;
       }
     }
+  };
+
+  // Aviso a quien agendó. Solo desde el número principal: el de respaldo es el de contingencias.
+  let client = 'sin-telefono';
+  if (phone && !usedFallback) {
+    const firstName = clean(b.first_name) || clean(name).split(' ')[0] || '';
+    const clientWhen = fmtWhen(when, clientTz);
+    const clientText = kind === 'reminder'
+      ? [
+        `⏰ Hola${firstName ? ` ${firstName}` : ''}, te recordamos tu llamada con el equipo de *${calName}*.`,
+        '',
+        `📅 ${clientWhen || '—'}${clientTz !== 'America/Bogota' ? ` (hora de ${clientTz})` : ''}`,
+        link ? `🔗 Enlace para conectarte: ${link}` : '',
+        '',
+        'Te recomendamos conectarte 5 minutos antes. ¡Nos vemos! 🙌',
+      ]
+      : [
+        `✅ Hola${firstName ? ` ${firstName}` : ''}, tu llamada con el equipo de *${calName}* quedó agendada.`,
+        '',
+        `📅 ${clientWhen || '—'}${clientTz !== 'America/Bogota' ? ` (hora de ${clientTz})` : ''}`,
+        link ? `🔗 Enlace para conectarte: ${link}` : 'El enlace de la llamada te llegará por este medio antes de la reunión.',
+        '',
+        'Si necesitas reprogramar, responde a este mensaje. ¡Te esperamos! 🙌',
+      ];
+    client = (await sendWithRetry(phone, clientText.filter((l, i, a) => l || a[i - 1]).join('\n'))) ? 'enviado' : 'fallido';
+    await sleep(5500);
+  } else if (phone) {
+    client = 'omitido-respaldo';
+  }
+
+  let ok = 0;
+  let failed = 0;
+  for (const to of team) {
+    if (await sendWithRetry(to, text)) ok += 1;
+    else failed += 1;
     await sleep(5500); // respetar protección de cuenta (1 msg cada ~5s)
   }
 
@@ -257,6 +321,8 @@ export default async function handler(req, res) {
     sent: ok,
     failed,
     emails,
+    client,
+    link: Boolean(link),
     team: team.map(maskPhone),
     kind,
     fallback: usedFallback,

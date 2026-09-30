@@ -81,6 +81,24 @@ export async function searchContact(filters) {
 export const findContactByPhone = (phone) => searchContact([{ field: 'phone', operator: 'eq', value: phone }]);
 export const findContactByEmail = (email) => searchContact([{ field: 'email', operator: 'eq', value: email }]);
 
+export async function getAppointment(eventId) {
+  const resp = await fetch(`${PUBLIC_BASE}/calendars/events/appointments/${encodeURIComponent(eventId)}`, {
+    headers: { Authorization: 'Bearer ' + PIT(), Version: '2021-07-28', Accept: 'application/json' },
+  });
+  if (!resp.ok) return null;
+  const json = await resp.json();
+  return json.appointment || json.event || null;
+}
+
+export async function getContactAppointments(contactId) {
+  const resp = await fetch(`${PUBLIC_BASE}/contacts/${encodeURIComponent(contactId)}/appointments`, {
+    headers: { Authorization: 'Bearer ' + PIT(), Version: '2021-07-28', Accept: 'application/json' },
+  });
+  if (!resp.ok) return [];
+  const json = await resp.json();
+  return json.events || json.appointments || [];
+}
+
 // Envía un email por la API de conversaciones (queda registrado con estado de entrega en GHL).
 export async function sendTrackedEmail({ to, subject, html, fromName }) {
   let contact = await findContactByEmail(to);
