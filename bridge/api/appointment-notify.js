@@ -78,15 +78,29 @@ function isUrl(s) {
   return typeof s === 'string' && /^https?:\/\//i.test(s.trim());
 }
 
+// GHL a veces envía la hora sin zona ("2026-10-02T08:30:00"): es hora de la cuenta (Bogotá).
+function parseWhen(s, timeZone = 'America/Bogota') {
+  if (!s) return null;
+  if (/[zZ]|[+-]\d\d:?\d\d$/.test(s)) return new Date(s);
+  const asUtc = new Date(`${s.replace(' ', 'T')}Z`);
+  if (isNaN(asUtc.getTime())) return new Date(s);
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
+    timeZone, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  }).formatToParts(asUtc).map((x) => [x.type, x.value]));
+  const zoned = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  return new Date(asUtc.getTime() - (zoned - asUtc.getTime()));
+}
+
 // Vercel corre en UTC: la zona horaria debe ir explícita.
 function fmtWhen(iso, timeZone = 'America/Bogota') {
   if (!iso) return '';
   try {
-    const d = new Date(iso);
+    const d = parseWhen(iso);
     if (isNaN(d.getTime())) return iso;
     return d.toLocaleString('es-CO', { dateStyle: 'full', timeStyle: 'short', timeZone });
   } catch {
-    return fmtWhen(iso);
+    return timeZone === 'America/Bogota' ? iso : fmtWhen(iso);
   }
 }
 
@@ -122,6 +136,7 @@ export default async function handler(req, res) {
   // Las variables sin resolver ("{{...}}") se tratan como vacías.
   const val = (...xs) => {
     for (const x of xs) {
+      if (x && typeof x === 'object') continue;
       const s = (x ?? '').toString().trim();
       if (s && !/^\{\{.*\}\}$/.test(s)) return s;
     }
@@ -133,7 +148,7 @@ export default async function handler(req, res) {
   const name = val(b.name, b.full_name, [b.first_name, b.last_name].filter(Boolean).join(' '), b.contact_name);
   const email = val(b.email);
   const phone = val(b.phone);
-  const when = val(b.when, cal.startTime, cal.start_time);
+  let when = val(b.when, cal.startTime, cal.start_time);
   const location = val(b.location, cal.address, cal.location);
   const meeting_link = val(b.meeting_link, cal.meetingLocation, cal.meeting_location);
   const zoom_link = val(b.zoom_link);
@@ -153,34 +168,38 @@ export default async function handler(req, res) {
     : phones('META_TEAM_PHONES', '');
 
   const fromPhone = process.env.NOTIFY_FROM_PHONE || '+17863728411';
-  const whenFmt = fmtWhen(when);
   const clientTz = val(cal.selectedTimezone, cal.selected_timezone, b.timezone) || 'America/Bogota';
   const calName = teamKey === 'tiktok' ? 'TikTok Ads' : 'Meta Ads';
-  console.log('appointment-notify calendar keys=', Object.keys(cal).join(','));
+  console.log('appointment-notify calendar=', JSON.stringify(cal).slice(0, 600));
 
   // Enlace de la reunión: payload > cita en GHL (Meet/Zoom generado) > enlace fijo del calendario.
   let link = [zoom_link, google_meet_link, meeting_link, location]
     .map((s) => (s || '').toString().trim())
     .find(isUrl) || '';
-  // Google Meet se genera unos segundos después de agendar: se reintenta la consulta.
+  // La cita consultada en GHL trae la hora con zona horaria y el enlace; Google Meet
+  // puede tardar unos segundos en generarse, por eso se reintenta.
   const appointmentId = val(cal.appointmentId, cal.appointment_id, b.appointment_id);
   const contactId = val(b.contact_id, b.contactId, cd.contact_id);
   const linkOf = (a) => [a?.address, a?.meetingLocation, a?.hangoutLink].find(isUrl) || '';
+  let appt = null;
   for (let attempt = 0; !link && (appointmentId || contactId) && attempt < 4; attempt++) {
     if (attempt) await sleep(3000);
     try {
       if (appointmentId) {
-        link = linkOf(await getAppointment(appointmentId));
+        appt = await getAppointment(appointmentId);
       } else {
-        const whenMs = Date.parse(when);
+        const whenMs = parseWhen(when)?.getTime() ?? Date.now();
         const appts = (await getContactAppointments(contactId))
           .filter((a) => !calendar_id || a.calendarId === calendar_id)
           .sort((x, y) => Math.abs(Date.parse(x.startTime) - whenMs) - Math.abs(Date.parse(y.startTime) - whenMs));
-        link = linkOf(appts[0]);
+        appt = appts[0] || null;
       }
+      link = linkOf(appt);
     } catch (e) { /* no fatal */ }
   }
+  if (appt?.startTime && /[zZ]|[+-]\d\d:?\d\d$/.test(appt.startTime)) when = appt.startTime;
   if (!link) link = fixedMeetingLink(calendar_id);
+  const whenFmt = fmtWhen(when);
 
   const clean = (s) => (s || '').toString().trim();
 
