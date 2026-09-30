@@ -211,7 +211,9 @@ export default async function handler(req, res) {
   if (!link) link = fixedMeetingLink(realCalendarId);
   // Sin Google Meet: sala propia por cita, guardada en GHL para recordatorios, correos y agenda.
   if (!link && appt?.id && kind !== 'reminder') {
-    link = `https://meet.jit.si/ControlAds-${calName.replace(/\s+/g, '')}-${appt.id}`;
+    // meet.jit.si exige que un moderador inicie sesión; esta instancia abre la sala sin cuenta.
+    const base = process.env.MEETING_BASE_URL || 'https://meet.ffmuc.net';
+    link = `${base}/ControlAds-${calName.replace(/\s+/g, '')}-${appt.id}`;
     try { await setAppointmentLink(appt.id, link); } catch (e) { /* no fatal */ }
   }
   const whenFmt = fmtWhen(when);
