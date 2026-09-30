@@ -27,6 +27,7 @@
 // }
 
 import { sendText, pickConnectedSession } from '../lib/wasender.js';
+import { sendTrackedEmail } from '../lib/ghl.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -52,6 +53,25 @@ function maskPhone(p) {
   const d = p.replace(/\D/g, '');
   if (d.length < 6) return '•••';
   return `+${d.slice(0, 2)}••••${d.slice(-4)}`;
+}
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// WhatsApp -> HTML: *negrita* y saltos de línea; URLs como enlaces.
+function toHtml(text) {
+  return esc(text)
+    .replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>')
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1">$1</a>')
+    .split('\n').join('<br>');
+}
+
+async function sendEmailWithRetry(msg) {
+  try {
+    return await sendTrackedEmail(msg);
+  } catch (e) {
+    await sleep(1500);
+    return sendTrackedEmail(msg);
+  }
 }
 
 function isUrl(s) {
@@ -161,6 +181,24 @@ export default async function handler(req, res) {
     ].filter(Boolean).join('\n');
   }
 
+  // Correos al equipo en paralelo y en primer lugar: salen aunque WhatsApp esté caído.
+  const teamEmails = phones(teamKey === 'tiktok' ? 'TIKTOK_TEAM_EMAILS' : 'META_TEAM_EMAILS', '');
+  const subject = kind === 'reminder'
+    ? `⏰ Recordatorio de cita ${calName} — ${clean(name) || 'cliente'} — ${whenFmt}`
+    : `🔔 Nueva cita ${calName} — ${clean(name) || 'cliente'} — ${whenFmt}`;
+  const emailsPromise = Promise.allSettled(teamEmails.map((to) => sendEmailWithRetry({
+    to,
+    subject,
+    html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5">${toHtml(text)}</div>`,
+    fromName: `Citas ${calName}`,
+  })));
+  const emailSummary = async () => {
+    const results = await emailsPromise;
+    const failedEmails = results.filter((r) => r.status === 'rejected');
+    for (const r of failedEmails) console.error('appointment-notify email falló:', r.reason?.message);
+    return { sent: results.length - failedEmails.length, failed: failedEmails.length };
+  };
+
   // Elegir la sesión emisora: el número principal si está conectado; si no, un respaldo conectado.
   const fallbacks = (process.env.NOTIFY_FALLBACK_PHONES || '3150030990')
     .split(',').map((p) => p.trim()).filter(Boolean);
@@ -168,11 +206,14 @@ export default async function handler(req, res) {
   try {
     sender = await pickConnectedSession([fromPhone, ...fallbacks]);
   } catch (e) {
-    return res.status(500).json({ ok: false, error: 'wasender-no-disponible' });
+    sender = { api_key: null, tried: [] };
   }
   if (!sender.api_key) {
     console.error('appointment-notify: ninguna sesión conectada', JSON.stringify(sender.tried));
-    return res.status(503).json({ ok: false, error: 'sin-sesion-conectada', tried: sender.tried.map((t) => t.status) });
+    const emails = await emailSummary();
+    return res.status(emails.sent ? 200 : 503).json({
+      ok: false, error: 'sin-sesion-conectada', whatsapp: { sent: 0, failed: team.length }, emails,
+    });
   }
   const apiKey = sender.api_key;
   const usedFallback = sender.phone_number.replace(/\D/g, '') !== fromPhone.replace(/\D/g, '');
@@ -196,16 +237,26 @@ export default async function handler(req, res) {
       await sendText(to, text, apiKey);
       ok += 1;
     } catch (e) {
-      failed += 1;
+      await sleep(5500);
+      try {
+        await sendText(to, text, apiKey);
+        ok += 1;
+      } catch (e2) {
+        console.error('appointment-notify whatsapp falló:', maskPhone(to), e2.message);
+        failed += 1;
+      }
     }
     await sleep(5500); // respetar protección de cuenta (1 msg cada ~5s)
   }
 
-  // Respuesta mínima: sin exponer números ni detalles internos.
+  const emails = await emailSummary();
+
+  // Respuesta mínima: sin exponer números, correos ni detalles internos.
   return res.status(200).json({
-    ok: failed === 0,
+    ok: failed === 0 && emails.failed === 0,
     sent: ok,
     failed,
+    emails,
     team: team.map(maskPhone),
     kind,
     fallback: usedFallback,

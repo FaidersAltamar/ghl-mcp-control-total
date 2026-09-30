@@ -81,6 +81,30 @@ export async function searchContact(filters) {
 export const findContactByPhone = (phone) => searchContact([{ field: 'phone', operator: 'eq', value: phone }]);
 export const findContactByEmail = (email) => searchContact([{ field: 'email', operator: 'eq', value: email }]);
 
+// Envía un email por la API de conversaciones (queda registrado con estado de entrega en GHL).
+export async function sendTrackedEmail({ to, subject, html, fromName }) {
+  let contact = await findContactByEmail(to);
+  if (!contact) contact = await upsertContact({ email: to, tags: ['equipo-notificaciones'] });
+  const resp = await fetch(`${PUBLIC_BASE}/conversations/messages`, {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + PIT(),
+      Version: '2021-04-15',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: 'Email',
+      contactId: contact.id,
+      subject,
+      html,
+      ...(fromName ? { emailFrom: `${fromName} <${process.env.NOTIFY_EMAIL_FROM || 'no-reply@controlads.com.co'}>` } : {}),
+    }),
+  });
+  const text = await resp.text();
+  if (!resp.ok) throw new Error(`Email ${resp.status}: ${text.slice(0, 200)}`);
+  return JSON.parse(text);
+}
+
 export async function updateContactPhone(contactId, phone) {
   const resp = await fetch(`${PUBLIC_BASE}/contacts/${contactId}`, {
     method: 'PUT',

@@ -6,7 +6,7 @@
     "api/sessions-connect.js": { "maxDuration": 30 },
     "api/sessions-qrcode.js": { "maxDuration": 30 },
     "api/sessions-disconnect.js": { "maxDuration": 30 },
-    "api/appointment-notify.js": { "maxDuration": 30 }
+    "api/appointment-notify.js": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/", "destination": "/api/home" }
