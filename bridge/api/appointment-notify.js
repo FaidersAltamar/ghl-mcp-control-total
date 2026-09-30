@@ -27,7 +27,7 @@
 // }
 
 import { sendText, pickConnectedSession } from '../lib/wasender.js';
-import { sendTrackedEmail, getAppointment, getContactAppointments } from '../lib/ghl.js';
+import { sendTrackedEmail, getAppointment, getContactAppointments, setAppointmentLink } from '../lib/ghl.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -209,6 +209,11 @@ export default async function handler(req, res) {
   const realCalendarId = appt?.calendarId || calendar_id;
   if (CAL_LABEL[realCalendarId]) calName = CAL_LABEL[realCalendarId];
   if (!link) link = fixedMeetingLink(realCalendarId);
+  // Sin Google Meet: sala propia por cita, guardada en GHL para recordatorios, correos y agenda.
+  if (!link && appt?.id && kind !== 'reminder') {
+    link = `https://meet.jit.si/ControlAds-${calName.replace(/\s+/g, '')}-${appt.id}`;
+    try { await setAppointmentLink(appt.id, link); } catch (e) { /* no fatal */ }
+  }
   const whenFmt = fmtWhen(when);
 
   // El paso "24 h antes" se ejecuta de inmediato si se agendó con menos de 24 h: se omite ese duplicado.
@@ -255,12 +260,32 @@ export default async function handler(req, res) {
   const subject = kind === 'reminder'
     ? `⏰ Recordatorio de cita ${calName} — ${clean(name) || 'cliente'} — ${whenFmt}`
     : `🔔 Nueva cita ${calName} — ${clean(name) || 'cliente'} — ${whenFmt}`;
-  const emailsPromise = Promise.allSettled(teamEmails.map((to) => sendEmailWithRetry({
+  const emailJobs = teamEmails.map((to) => sendEmailWithRetry({
     to,
     subject,
     html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5">${toHtml(text)}</div>`,
     fromName: `Citas ${calName}`,
-  })));
+  }));
+  if (email && link) {
+    const first = clean(b.first_name) || clean(name).split(' ')[0] || '';
+    const btn = `<a href="${esc(link)}" style="display:inline-block;background:#d60000;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Unirme a la llamada</a>`;
+    emailJobs.push(sendEmailWithRetry({
+      to: email,
+      subject: kind === 'reminder'
+        ? `⏰ Recordatorio: tu llamada con ${calName} — ${whenFmt}`
+        : `✅ Tu llamada con ${calName} está confirmada — ${whenFmt}`,
+      html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6">
+<p>Hola${first ? ` ${esc(first)}` : ''},</p>
+<p>${kind === 'reminder' ? 'Te recordamos tu llamada' : 'Tu llamada quedó agendada'} con el equipo de <strong>${esc(calName)}</strong>.</p>
+<p><strong>📅 Fecha y hora:</strong> ${esc(whenFmt)} (hora Colombia)</p>
+<p><strong>🔗 Enlace de la reunión:</strong><br><a href="${esc(link)}">${esc(link)}</a></p>
+<p>${btn}</p>
+<p>Te recomendamos conectarte 5 minutos antes. Si necesitas reprogramar, responde a este correo.</p>
+</div>`,
+      fromName: `Citas ${calName}`,
+    }));
+  }
+  const emailsPromise = Promise.allSettled(emailJobs);
   const emailSummary = async () => {
     const results = await emailsPromise;
     const failedEmails = results.filter((r) => r.status === 'rejected');

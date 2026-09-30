@@ -90,6 +90,15 @@ export async function getAppointment(eventId) {
   return json.appointment || json.event || null;
 }
 
+export async function setAppointmentLink(eventId, link) {
+  const resp = await fetch(`${PUBLIC_BASE}/calendars/events/appointments/${encodeURIComponent(eventId)}`, {
+    method: 'PUT',
+    headers: { Authorization: 'Bearer ' + PIT(), Version: '2021-04-15', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ address: link, meetingLocationType: 'custom', overrideLocationConfig: true }),
+  });
+  return resp.ok;
+}
+
 export async function getContactAppointments(contactId) {
   const resp = await fetch(`${PUBLIC_BASE}/contacts/${encodeURIComponent(contactId)}/appointments`, {
     headers: { Authorization: 'Bearer ' + PIT(), Version: '2021-07-28', Accept: 'application/json' },
