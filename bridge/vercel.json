@@ -2,6 +2,7 @@
   "functions": {
     "api/webhook.js": { "maxDuration": 30 },
     "api/send.js": { "maxDuration": 30 },
+    "api/inbox-send.js": { "maxDuration": 30 },
     "api/sessions.js": { "maxDuration": 30 },
     "api/sessions-connect.js": { "maxDuration": 30 },
     "api/sessions-qrcode.js": { "maxDuration": 30 },

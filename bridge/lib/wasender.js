@@ -45,6 +45,26 @@ export async function sendText(to, text, apiKeyOverride) {
   });
 }
 
+// Envío con multimedia opcional: { text, imageUrl | videoUrl | audioUrl | documentUrl, fileName }.
+export async function sendMessage(to, fields, apiKeyOverride) {
+  const body = { to };
+  for (const k of ['text', 'imageUrl', 'videoUrl', 'audioUrl', 'documentUrl', 'stickerUrl', 'fileName']) {
+    if (fields[k]) body[k] = fields[k];
+  }
+  return wasenderFetch('/api/send-message', { method: 'POST', body, auth: 'key', token: apiKeyOverride });
+}
+
+// Devuelve una URL pública temporal (1 h) del archivo descifrado.
+export async function decryptMedia(waId, mediaType, mediaObj, apiKeyOverride) {
+  const r = await wasenderFetch('/api/decrypt-media', {
+    method: 'POST',
+    auth: 'key',
+    token: apiKeyOverride,
+    body: { data: { messages: { key: { id: waId }, message: { [mediaType]: mediaObj } } } },
+  });
+  return r?.publicUrl || r?.data?.publicUrl || null;
+}
+
 export async function getUser() {
   return wasenderFetch('/api/user', { auth: 'key' });
 }
@@ -59,11 +79,15 @@ export async function getSession(id) {
 }
 
 // Encuentra una sesión por su webhook_secret (para saber desde qué número llegó un mensaje).
+let sessionsCache = { list: null, ts: 0 };
+
 export async function findSessionBySecret(secret) {
   if (!secret) return null;
-  const result = await listSessions();
-  const list = result.data || [];
-  return list.find((s) => s.webhook_secret === secret) || null;
+  if (!sessionsCache.list || Date.now() - sessionsCache.ts > 60000) {
+    const result = await listSessions();
+    sessionsCache = { list: result.data || [], ts: Date.now() };
+  }
+  return sessionsCache.list.find((s) => s.webhook_secret === secret) || null;
 }
 
 // Resuelve la api_key de una sesión a partir de su id o su teléfono (para enviar desde esa sesión).

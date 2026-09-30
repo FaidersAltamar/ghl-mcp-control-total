@@ -17,6 +17,7 @@ import {
 import { aiChatMessages, buildSystemPrompt, summarizeConversation } from '../lib/ai.js';
 import { getKnowledge } from '../lib/knowledge.js';
 import { sendText, findSessionBySecret } from '../lib/wasender.js';
+import { buildInboxEvents, forwardToInbox } from '../lib/inbox.js';
 
 // Calendarios que el bot puede consultar para responder "qué reuniones hay pendientes".
 const AGENDA_CALS = [
@@ -63,6 +64,13 @@ function recordBotSend(phone, text) {
   botSends.set(phone, { text, ts: Date.now() });
   const cutoff = Date.now() - 5 * 60 * 1000;
   for (const [k, v] of botSends) if (v.ts < cutoff) botSends.delete(k);
+}
+
+function isRecentBotText(text) {
+  const t = (text || '').trim();
+  if (!t) return false;
+  for (const v of botSends.values()) if (v.text === t && Date.now() - v.ts < 90 * 1000) return true;
+  return false;
 }
 
 // ¿El mensaje saliente es el eco de lo que acabamos de enviar nosotros?
@@ -130,8 +138,19 @@ export default async function handler(req, res) {
 
   const payload = req.body;
   const event = payload?.event;
+
+  // Bandeja de chats del sitio: recibe todo (multimedia, estados, reacciones), no solo texto.
+  let inbox = null;
+  try {
+    const session = await findSessionBySecret(sig);
+    const events = await buildInboxEvents(payload, session, { isBotSend: isRecentBotText });
+    inbox = await forwardToInbox(events);
+  } catch (e) {
+    console.error('inbox error:', e.message);
+  }
+
   const msg = payload?.data?.messages;
-  if (!msg) return res.status(200).json({ received: true, skipped: 'no-message' });
+  if (!msg) return res.status(200).json({ received: true, skipped: 'no-message', inbox });
 
   const fromMe = msg.key?.fromMe === true;
   const isInbound = event === 'messages.received';
